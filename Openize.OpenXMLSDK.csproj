@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	  <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+	  <Description>A .NET library that simplifies working with OpenXML documents. Create, read, and manipulate Wordprocessing documents (Docx), Excel spreadsheets (Xlsx), and PowerPoint presentations (Pptx) effortlessly with Openize.OpenXML SDK. Licensed under MIT.</Description>
+	  <ReleaseVersion>25.1.0</ReleaseVersion>
+	  <SynchReleaseVersion>false</SynchReleaseVersion>
+	  <PackageVersion>25.1.0</PackageVersion>
+	  <Authors>Openize Pty Ltd</Authors>
+	  <Copyright>2024-2025</Copyright>
+	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+	  <Owners>Openize Pty Ltd</Owners>
+	  <PackageProjectUrl>https://github.com/openize-com/openize-open-xml-sdk-net</PackageProjectUrl>
+	  <Summary>Work with offile file formats including DOCX, XLSX and PPTX with a few lines of code.</Summary>
+	  <Title>Openize.OpenXML SDK for .NET</Title>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DocumentationFile>bin\Debug\netcoreapp3.1\Openize.OpenXMLSDK.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="DocumentFormat.OpenXml" />
+    
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="3.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+</Project>
