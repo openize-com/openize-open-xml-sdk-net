@@ -40,7 +40,18 @@ Console.WriteLine("Empty Presentation document created !!!");
 ```
 
 ## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request. For significant changes, please open an issue first to discuss what you would like to contribute.
+
+Thank you for your interest in contributing to this project! We welcome contributions from the community. To ensure a smooth collaboration, please follow these steps when submitting a pull request:
+
+1. **Fork & Clone** – Fork the repository and clone it to your local machine.
+2. **Create a Branch** – Work on a new branch specific to your contribution.
+3. **Sign the Contributor License Agreement (CLA)** – Before we can accept your first contribution, you must sign our CLA via [CLA Assistant](https://cla-assistant.io). When you submit your first pull request, you will be prompted to sign the agreement. You can also review the CLA here: [https://cla.openize.com/agreement](https://cla.openize.com/agreement).
+4. **Submit a Pull Request (PR)** – Once your changes are ready, submit a PR with a clear description of your contribution.
+5. **Review Process** – Our maintainers will review your PR and provide feedback if necessary.
+
+By contributing to this project, you agree to the terms of the CLA and confirm that your contributions comply with the project’s licensing policies.
+
+We appreciate your contributions and look forward to collaborating with you! 
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
