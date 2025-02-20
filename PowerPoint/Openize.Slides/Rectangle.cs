@@ -7,122 +7,135 @@ using System.Collections.Generic;
 namespace Openize.Slides
 {
     /// <summary>
-    /// Represents a rectangle shape within a slide.
+    /// This class represents the rectangle shape within a slide.
     /// </summary>
     public class Rectangle
     {
+        private double _x;
+        private double _y;
+        private double _Width;
+        private double _Height;
+        private RectangleShapeFacade _Facade;
+        private int _shapeIndex;
+        private string _BackgroundColor = null;
+        private AnimationType _Animation = AnimationType.None;
         /// <summary>
-        /// Gets or sets the X coordinate of the rectangle shape.
+        /// Property to get or set X coordinate of the shape.
         /// </summary>
-        public double X { get; set; }
+        public double X { get => _x; set => _x = value; }
 
         /// <summary>
-        /// Gets or sets the Y coordinate of the rectangle shape.
+        /// Property to get or set Y coordinate of the shape.
         /// </summary>
-        public double Y { get; set; }
+        public double Y { get => _y; set => _y = value; }
 
         /// <summary>
-        /// Gets or sets the width of the rectangle shape.
+        /// Property to get or set width of the shape.
         /// </summary>
-        public double Width { get; set; }
+        public double Width { get => _Width; set => _Width = value; }
 
         /// <summary>
-        /// Gets or sets the height of the rectangle shape.
+        /// Property to get or set height of the shape.
         /// </summary>
-        public double Height { get; set; }
+        public double Height { get => _Height; set => _Height = value; }
 
         /// <summary>
-        /// Gets or sets the facade that handles rectangle shape operations.
+        /// Property to get or set the RectangleShapeFacade.
         /// </summary>
-        public RectangleShapeFacade Facade { get; set; }
+        public RectangleShapeFacade Facade { get => _Facade; set => _Facade = value; }
 
         /// <summary>
-        /// Gets or sets the index of the shape within a slide.
+        /// Property to get or set the shape index within a slide.
         /// </summary>
-        public int ShapeIndex { get; set; }
+        public int ShapeIndex { get => _shapeIndex; set => _shapeIndex = value; }
 
         /// <summary>
-        /// Gets or sets the background color of the rectangle shape.
-        /// Default value is "Transparent".
+        /// Property to set or get background color of a rectangle shape.
         /// </summary>
-        public string BackgroundColor { get; set; } = "Transparent";
-
+        public string BackgroundColor { get => _BackgroundColor; set => _BackgroundColor = value; }
         /// <summary>
-        /// Gets or sets the animation type applied to the rectangle shape.
-        /// Default value is <see cref="AnimationType.None"/>.
+        /// Property to set animation
         /// </summary>
-        public AnimationType Animation { get; set; } = AnimationType.None;
-
+        public AnimationType Animation { get => _Animation; set => _Animation = value; }
         /// <summary>
-        /// Initializes a new instance of the <see cref="Rectangle"/> class.
+        /// Constructor of the Rectangle class initializes the object of RectangleShapeFacade and populates its fields.
         /// </summary>
         public Rectangle()
         {
-            Facade = new RectangleShapeFacade
-            {
-                ShapeIndex = ShapeIndex
-            };
+            _Facade = new RectangleShapeFacade();
+            _Facade.ShapeIndex = _shapeIndex;
 
-            X = Utility.EmuToPixels(1349828);
-            Y = Utility.EmuToPixels(1999619);
-            Width = Utility.EmuToPixels(6000000);
-            Height = Utility.EmuToPixels(2000000);
+            _BackgroundColor = "Transparent";
+            _x = Utility.EmuToPixels(1349828);
+            _y = Utility.EmuToPixels(1999619);
+            _Width = Utility.EmuToPixels(6000000);
+            _Height = Utility.EmuToPixels(2000000);
 
-            PopulateFacade();
+            Populate_Facade();
         }
 
         /// <summary>
-        /// Updates the rectangle shape by synchronizing its properties with the facade.
+        /// Method to update rectangle shape.
         /// </summary>
         public void Update()
         {
-            PopulateFacade();
-            Facade.UpdateShape();
+            Populate_Facade();
+            _Facade.UpdateShape();
         }
 
         /// <summary>
-        /// Populates the facade with the current rectangle properties.
-        /// Converts pixel values to EMUs before setting them in the facade.
+        /// Method to populate the fields of the respective facade.
         /// </summary>
-        private void PopulateFacade()
+        private void Populate_Facade()
         {
-            Facade.BackgroundColor = BackgroundColor;
-            Facade.X = Utility.PixelsToEmu(X);
-            Facade.Y = Utility.PixelsToEmu(Y);
-            Facade.Width = Utility.PixelsToEmu(Width);
-            Facade.Height = Utility.PixelsToEmu(Height);
+            _Facade.BackgroundColor = _BackgroundColor;
+            _Facade.X = Utility.PixelsToEmu(_x);
+            _Facade.Y = Utility.PixelsToEmu(_y);
+            _Facade.Width = Utility.PixelsToEmu(_Width);
+            _Facade.Height = Utility.PixelsToEmu(_Height);
         }
 
         /// <summary>
-        /// Retrieves a list of rectangle objects from their corresponding facades.
+        /// Method for getting the list of rectangle shapes.
         /// </summary>
-        /// <param name="rectangleFacades">A list of <see cref="RectangleShapeFacade"/> objects.</param>
-        /// <returns>A list of <see cref="Rectangle"/> objects.</returns>
-        public static List<Rectangle> GetRectangles(List<RectangleShapeFacade> rectangleFacades)
+        /// <param name="RectangleFacades">A list of RectangleShapeFacade objects.</param>
+        /// <returns>A list of Rectangle objects.</returns>
+        public static List<Rectangle> GetRectangles(List<RectangleShapeFacade> RectangleFacades)
         {
-            var rectangles = new List<Rectangle>();
-            foreach (var facade in rectangleFacades)
+            List<Rectangle> Rectangles = new List<Rectangle>();
+            try
             {
-                rectangles.Add(new Rectangle
+                foreach (var facade in RectangleFacades)
                 {
-                    BackgroundColor = facade.BackgroundColor,
-                    X = Utility.EmuToPixels(facade.X),
-                    Y = Utility.EmuToPixels(facade.Y),
-                    Width = Utility.EmuToPixels(facade.Width),
-                    Height = Utility.EmuToPixels(facade.Height),
-                    Facade = facade,
-                    ShapeIndex = facade.ShapeIndex
-                });
+                    Rectangle Rectangle = new Rectangle
+                    {
+                        BackgroundColor = facade.BackgroundColor,
+                        X = Utility.EmuToPixels(facade.X),
+                        Y = Utility.EmuToPixels(facade.Y),
+                        Width = Utility.EmuToPixels(facade.Width),
+                        Height = Utility.EmuToPixels(facade.Height),
+                        Facade = facade,
+                        ShapeIndex = facade.ShapeIndex
+                    };
+
+                    Rectangles.Add(Rectangle);
+                }
             }
-            return rectangles;
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Getting Rectangle Shapes");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
+
+            return Rectangles;
         }
 
         /// <summary>
-        /// Removes the rectangle shape from the slide.
+        /// Method to remove the rectangle shape from a slide.
         /// </summary>
         public void Remove()
         {
-            Facade.RemoveShape(Facade.RectangleShape);
+            _Facade.RemoveShape(this.Facade.RectangleShape);
         }
     }
 }

@@ -19,21 +19,20 @@ namespace Openize.Slides.Facade
     {
         // Properties for ShapeId, Delay, and Duration
         public string ShapeId { get; set; }
-        public int Duration { get; set; }
-        public string Type { get; set; }
+        public string Delay { get; set; }
+        public string Duration { get; set; }
 
         // Constructor to initialize the properties
-        public AnimateFacade(string shapeId = "1", int duration = 0, string type = "fade")
+        public AnimateFacade(string shapeId = "1", string delay = "0", string duration = "indefinite")
         {
             ShapeId = shapeId;
-            Type = type;
+            Delay = delay;
             Duration = duration;
         }
-        public Timing animate()
-        {
-            return GenerateTiming(ShapeId, 1000, "fade");
+        public Timing animate() {
+            return GenerateTiming(ShapeId);
         }
-        public Timing GenerateTiming(String shapeId, int duration, String type)
+        public Timing GenerateTiming(String shapeId)
         {
             Timing timing1 = new Timing();
 
@@ -120,10 +119,10 @@ namespace Openize.Slides.Facade
             setBehavior1.Append(commonBehavior1);
             setBehavior1.Append(toVariantValue1);
 
-            AnimateEffect animateEffect1 = new AnimateEffect() { Transition = AnimateEffectTransitionValues.In, Filter = type };
+            AnimateEffect animateEffect1 = new AnimateEffect() { Transition = AnimateEffectTransitionValues.In, Filter = "fade" };
 
             CommonBehavior commonBehavior2 = new CommonBehavior();
-            CommonTimeNode commonTimeNode7 = new CommonTimeNode() { Id = (UInt32Value)7U, Duration = duration.ToString() };
+            CommonTimeNode commonTimeNode7 = new CommonTimeNode() { Id = (UInt32Value)7U, Duration = "1000" };
 
             TargetElement targetElement2 = new TargetElement();
             ShapeTarget shapeTarget2 = new ShapeTarget() { ShapeId = shapeId };
@@ -138,7 +137,7 @@ namespace Openize.Slides.Facade
             Animate animate1 = new Animate() { CalculationMode = AnimateBehaviorCalculateModeValues.Linear, ValueType = AnimateBehaviorValues.Number };
 
             CommonBehavior commonBehavior3 = new CommonBehavior();
-            CommonTimeNode commonTimeNode8 = new CommonTimeNode() { Id = (UInt32Value)8U, Duration = duration.ToString(), Fill = TimeNodeFillValues.Hold };
+            CommonTimeNode commonTimeNode8 = new CommonTimeNode() { Id = (UInt32Value)8U, Duration = "1000", Fill = TimeNodeFillValues.Hold };
 
             TargetElement targetElement3 = new TargetElement();
             ShapeTarget shapeTarget3 = new ShapeTarget() { ShapeId = shapeId };
@@ -184,7 +183,7 @@ namespace Openize.Slides.Facade
             Animate animate2 = new Animate() { CalculationMode = AnimateBehaviorCalculateModeValues.Linear, ValueType = AnimateBehaviorValues.Number };
 
             CommonBehavior commonBehavior4 = new CommonBehavior();
-            CommonTimeNode commonTimeNode9 = new CommonTimeNode() { Id = (UInt32Value)9U, Duration = duration.ToString(), Fill = TimeNodeFillValues.Hold };
+            CommonTimeNode commonTimeNode9 = new CommonTimeNode() { Id = (UInt32Value)9U, Duration = "1000", Fill = TimeNodeFillValues.Hold };
 
             TargetElement targetElement4 = new TargetElement();
             ShapeTarget shapeTarget4 = new ShapeTarget() { ShapeId = shapeId };
