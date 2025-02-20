@@ -17,9 +17,9 @@ namespace Openize.Slides.Facade
 {
     public class SlideFacade
     {
-        
-        private P.Slide _PresentationSlide;
-        private SlidePart _SlidePart; 
+
+        private P.Slide _PresentationSlide = null;
+        private SlidePart _SlidePart = null;
 
         private String _RelationshipId;
         private int _SlideIndex;
@@ -65,7 +65,7 @@ namespace Openize.Slides.Facade
 
         private NotesSlidePart _NotesPart;
 
-       
+
 
         public P.Slide PresentationSlide { get => _PresentationSlide; set => _PresentationSlide = value; }
         public string RelationshipId { get => _RelationshipId; set => _RelationshipId = value; }
@@ -92,9 +92,9 @@ namespace Openize.Slides.Facade
         public List<HexagonFacade> HexagonFacades { get => _HexagonFacades; set => _HexagonFacades = value; }
         public List<TrapezoidFacade> TrapezoidFacades { get => _TrapezoidFacades; set => _TrapezoidFacades = value; }
         public List<PieFacade> PieFacades { get => _PieFacades; set => _PieFacades = value; }
-        
 
-        public SlideFacade (bool isNewSlide)
+
+        public SlideFacade(bool isNewSlide)
         {
             if (isNewSlide)
             {
@@ -103,7 +103,7 @@ namespace Openize.Slides.Facade
                 var _PresentationPart = PresentationDocumentFacade.getInstance().GetPresentationPart();
                 var _SlideIdList = _PresentationPart.Presentation.SlideIdList;
                 _SlideIdList.Append(new SlideId() { Id = (UInt32Value)Utility.GetRandomSlideId(), RelationshipId = _RelationshipId });
-               
+
                 _PresentationSlide = new P.Slide(
                     new CommonSlideData(
                          new ShapeTree(
@@ -118,8 +118,8 @@ namespace Openize.Slides.Facade
                 if (PresentationDocumentFacade.getInstance().PresentationSlideLayoutParts.Count != 0)
                     _SlidePart.AddPart(PresentationDocumentFacade.getInstance().PresentationSlideLayoutParts[0]);
             }
-         }
-        public void SetSlideBackground (string color)
+        }
+        public void SetSlideBackground(string color)
         {
             // Check if color is not null or empty
             if (!string.IsNullOrEmpty(color))
@@ -146,7 +146,7 @@ namespace Openize.Slides.Facade
                 _PresentationSlide.CommonSlideData.InsertBefore(newBackground, _PresentationSlide.CommonSlideData.ShapeTree);
             }
         }
-        
+
         public IEnumerable<Dictionary<string, string>> GetComments()
         {
             List<Dictionary<string, string>> comments = new List<Dictionary<string, string>>();
@@ -172,7 +172,7 @@ namespace Openize.Slides.Facade
             }
             return comments;
         }
-        public TextShapeFacade AddTextShape (String text, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y, 
+        public TextShapeFacade AddTextShape(String text, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y,
             Int64 width, Int64 height, String fontFamily, String textColor, String backgroundColor)
         {
             // Create an instance of TextShapeFacade
@@ -201,7 +201,7 @@ namespace Openize.Slides.Facade
             _PresentationSlide.CommonSlideData.ShapeTree.Append(textBoxShape);
             if (textShapeFacade.Animation != AnimationType.None)
             {
-                CallAnimation(textBoxShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(textBoxShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id, textShapeFacade.Animation);
             }
             return textShapeFacade;
         }
@@ -237,7 +237,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_RectangleShapeFacade.Animation != AnimationType.None)
             {
-                CallAnimation(rectangleShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(rectangleShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _RectangleShapeFacade.Animation);
             }
 
             return _RectangleShapeFacade;
@@ -275,7 +275,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_TriangleShapeFacade.Animation != AnimationType.None)
             {
-                CallAnimation(triangleShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(triangleShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _TriangleShapeFacade.Animation);
             }
 
             return _TriangleShapeFacade;
@@ -313,7 +313,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_DiamondShapeFacade.Animation != AnimationType.None)
             {
-                CallAnimation(diamondShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(diamondShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _DiamondShapeFacade.Animation);
             }
 
             return _DiamondShapeFacade;
@@ -350,7 +350,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_LineFacade.Animation != AnimationType.None)
             {
-                CallAnimation(line.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(line.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _LineFacade.Animation);
             }
 
             return _LineFacade;
@@ -387,7 +387,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_CurvedLineFacade.Animation != AnimationType.None)
             {
-                CallAnimation(curvedLine.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(curvedLine.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _CurvedLineFacade.Animation);
             }
 
             return _CurvedLineFacade;
@@ -424,7 +424,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_ArrowFacade.Animation != AnimationType.None)
             {
-                CallAnimation(arrow.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(arrow.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _ArrowFacade.Animation);
             }
 
             return _ArrowFacade;
@@ -461,7 +461,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_DoubleArrowFacade.Animation != AnimationType.None)
             {
-                CallAnimation(doubleArrow.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(doubleArrow.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _DoubleArrowFacade.Animation);
             }
 
             return _DoubleArrowFacade;
@@ -498,7 +498,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_DoubleBraceFacade.Animation != AnimationType.None)
             {
-                CallAnimation(doubleBrace.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(doubleBrace.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _DoubleBraceFacade.Animation);
             }
 
             return _DoubleBraceFacade;
@@ -535,7 +535,7 @@ namespace Openize.Slides.Facade
             // Handle animation
             if (_DoubleBracketFacade.Animation != AnimationType.None)
             {
-                CallAnimation(doubleBracket.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(doubleBracket.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _DoubleBracketFacade.Animation);
             }
 
             return _DoubleBracketFacade;
@@ -566,7 +566,7 @@ namespace Openize.Slides.Facade
             // Handle animation if necessary
             if (_PentagonFacade.Animation != AnimationType.None)
             {
-                CallAnimation(_Pentagon.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(_Pentagon.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _PentagonFacade.Animation);
             }
 
             return _PentagonFacade;
@@ -597,7 +597,7 @@ namespace Openize.Slides.Facade
             // Handle animation if necessary
             if (_HexagonFacade.Animation != AnimationType.None)
             {
-                CallAnimation(_Hexagon.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(_Hexagon.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _HexagonFacade.Animation);
             }
 
             return _HexagonFacade;
@@ -628,7 +628,7 @@ namespace Openize.Slides.Facade
             // Handle animation if necessary
             if (_TrapezoidFacade.Animation != AnimationType.None)
             {
-                CallAnimation(_Trapezoid.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(_Trapezoid.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _TrapezoidFacade.Animation);
             }
 
             return _TrapezoidFacade;
@@ -669,7 +669,7 @@ namespace Openize.Slides.Facade
             // Handle animation if present
             if (_CircleShapeFacade.Animation != AnimationType.None)
             {
-                CallAnimation(CircleShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(CircleShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _CircleShapeFacade.Animation);
             }
 
             return _CircleShapeFacade;
@@ -705,11 +705,11 @@ namespace Openize.Slides.Facade
             _PresentationSlide.CommonSlideData.ShapeTree.Append(_Pie);
             if (_PieFacade.Animation != AnimationType.None)
             {
-                CallAnimation(_Pie.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(_Pie.NonVisualShapeProperties.NonVisualDrawingProperties.Id, _PieFacade.Animation);
             }
             return _PieFacade;
         }
-        public TextShapeFacade AddTextListShape (List<String> textList, ListFacade facade, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y,
+        public TextShapeFacade AddTextListShape(List<String> textList, ListFacade facade, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y,
             Int64 width, Int64 height, String fontFamily, String textColor, String backgroundColor)
         {
             // Create an instance of TextShapeFacade
@@ -726,7 +726,7 @@ namespace Openize.Slides.Facade
                 .WithSize(width, height);
 
             // Create the P.Shape using the CreateShape method
-            P.Shape textBoxShape = textShapeFacade.CreateListShape(textList,facade);
+            P.Shape textBoxShape = textShapeFacade.CreateListShape(textList, facade);
 
             // Append the textBoxShape to the ShapeTree of the presentation slide
             if (_PresentationSlide.CommonSlideData.ShapeTree == null)
@@ -738,12 +738,12 @@ namespace Openize.Slides.Facade
             //_TextShapeFacades.Add(textShapeFacade);
             if (textShapeFacade.Animation != AnimationType.None)
             {
-                CallAnimation(textBoxShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(textBoxShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id, textShapeFacade.Animation);
             }
 
             return textShapeFacade;
         }
-        public TextShapeFacade AddTextShape ( List<TextSegmentFacade> textSegmentFacades,TextAlignment alignment, Int64 _x, Int64 _y,
+        public TextShapeFacade AddTextShape(List<TextSegmentFacade> textSegmentFacades, TextAlignment alignment, Int64 _x, Int64 _y,
            Int64 width, Int64 height, String backgroundColor)
         {
             // Create an instance of TextShapeFacade
@@ -769,7 +769,7 @@ namespace Openize.Slides.Facade
             //_TextShapeFacades.Add(textShapeFacade);
             if (textShapeFacade.Animation != AnimationType.None)
             {
-                CallAnimation(textBoxShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id);
+                CallAnimation(textBoxShape.NonVisualShapeProperties.NonVisualDrawingProperties.Id, textShapeFacade.Animation);
             }
             return textShapeFacade;
         }
@@ -777,7 +777,7 @@ namespace Openize.Slides.Facade
         public void AddNote(String noteText)
         {
             var relId = _RelationshipId;
-           
+
             NotesSlidePart notesSlidePart1;
             string existingSlideNote = noteText;
 
@@ -835,24 +835,31 @@ namespace Openize.Slides.Facade
                 _SlidePart.DeletePart(_SlidePart.NotesSlidePart);
             }
         }
-        public void  AddImage (ImageFacade picture )
+        public void AddImage(ImageFacade picture)
         {
             _PresentationSlide.CommonSlideData.ShapeTree.Append(picture.Image);
         }
-       
-        public void Update ()
+
+        public void Update()
         {
             this.SetSlideBackground(_BackgroundColor);
         }
-        private void CallAnimation(string shapeId)
+        private void CallAnimation(string shapeId, AnimationType animation)
         {
-           
+
             AnimateFacade animateFacade = new AnimateFacade();
+            animateFacade.Type = animation.ToString();
 
             // Optionally, override default properties
             animateFacade.ShapeId = shapeId; // You can change the ShapeId if needed
 
             _PresentationSlide.Append(animateFacade.animate());
+        }
+        public void close()
+        {
+            _PresentationSlide.RemoveAllChildren();
+            _PresentationSlide.Remove();
+            _PresentationSlide = null;
         }
 
     }
