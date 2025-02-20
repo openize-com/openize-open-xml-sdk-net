@@ -7,107 +7,116 @@ using System.Collections.Generic;
 namespace Openize.Slides
 {
     /// <summary>
-    /// This class represents the rectangle shape within a slide.
+    /// Represents a trapezoid shape within a slide.
     /// </summary>
     public class Trapezoid
     {
         private double _x;
         private double _y;
-        private double _Width;
-        private double _Height;
-        private TrapezoidFacade _Facade;
+        private double _width;
+        private double _height;
+        private TrapezoidFacade _facade;
         private int _shapeIndex;
-        private string _BackgroundColor = null;
-        private AnimationType _Animation = AnimationType.None;
+        private string _backgroundColor = null;
+        private AnimationType _animation = AnimationType.None;
+
         /// <summary>
-        /// Property to get or set X coordinate of the shape.
+        /// Gets or sets the X coordinate of the trapezoid shape.
         /// </summary>
         public double X { get => _x; set => _x = value; }
 
         /// <summary>
-        /// Property to get or set Y coordinate of the shape.
+        /// Gets or sets the Y coordinate of the trapezoid shape.
         /// </summary>
         public double Y { get => _y; set => _y = value; }
 
         /// <summary>
-        /// Property to get or set width of the shape.
+        /// Gets or sets the width of the trapezoid shape.
         /// </summary>
-        public double Width { get => _Width; set => _Width = value; }
+        public double Width { get => _width; set => _width = value; }
 
         /// <summary>
-        /// Property to get or set height of the shape.
+        /// Gets or sets the height of the trapezoid shape.
         /// </summary>
-        public double Height { get => _Height; set => _Height = value; }
+        public double Height { get => _height; set => _height = value; }
 
         /// <summary>
-        /// Property to get or set the TrapezoidShapeFacade.
+        /// Gets or sets the facade that handles trapezoid shape operations.
         /// </summary>
-        public TrapezoidFacade Facade { get => _Facade; set => _Facade = value; }
+        public TrapezoidFacade Facade { get => _facade; set => _facade = value; }
 
         /// <summary>
-        /// Property to get or set the shape index within a slide.
+        /// Gets or sets the shape index within a slide.
         /// </summary>
         public int ShapeIndex { get => _shapeIndex; set => _shapeIndex = value; }
 
         /// <summary>
-        /// Property to set or get background color of a rectangle shape.
+        /// Gets or sets the background color of the trapezoid shape.
+        /// Default value is "Transparent".
         /// </summary>
-        public string BackgroundColor { get => _BackgroundColor; set => _BackgroundColor = value; }
+        public string BackgroundColor { get => _backgroundColor; set => _backgroundColor = value; }
+
         /// <summary>
-        /// Property to set animation
+        /// Gets or sets the animation type applied to the trapezoid shape.
+        /// Default value is <see cref="AnimationType.None"/>.
         /// </summary>
-        public AnimationType Animation { get => _Animation; set => _Animation = value; }
+        public AnimationType Animation { get => _animation; set => _animation = value; }
+
         /// <summary>
-        /// Constructor of the Trapezoid class initializes the object of TrapezoidShapeFacade and populates its fields.
+        /// Initializes a new instance of the <see cref="Trapezoid"/> class.
         /// </summary>
         public Trapezoid()
         {
-            _Facade = new TrapezoidFacade();
-            _Facade.ShapeIndex = _shapeIndex;
+            _facade = new TrapezoidFacade
+            {
+                ShapeIndex = _shapeIndex
+            };
 
-            _BackgroundColor = "Transparent";
+            _backgroundColor = "Transparent";
             _x = Utility.EmuToPixels(1349828);
             _y = Utility.EmuToPixels(1999619);
-            _Width = Utility.EmuToPixels(6000000);
-            _Height = Utility.EmuToPixels(2000000);
+            _width = Utility.EmuToPixels(6000000);
+            _height = Utility.EmuToPixels(2000000);
 
-            Populate_Facade();
+            PopulateFacade();
         }
 
         /// <summary>
-        /// Method to update rectangle shape.
+        /// Updates the trapezoid shape by synchronizing its properties with the facade.
         /// </summary>
         public void Update()
         {
-            Populate_Facade();
-            _Facade.UpdateShape();
+            PopulateFacade();
+            _facade.UpdateShape();
         }
 
         /// <summary>
-        /// Method to populate the fields of the respective facade.
+        /// Populates the facade with the current trapezoid properties.
+        /// Converts pixel values to EMUs before setting them in the facade.
         /// </summary>
-        private void Populate_Facade()
+        private void PopulateFacade()
         {
-            _Facade.BackgroundColor = _BackgroundColor;
-            _Facade.X = Utility.PixelsToEmu(_x);
-            _Facade.Y = Utility.PixelsToEmu(_y);
-            _Facade.Width = Utility.PixelsToEmu(_Width);
-            _Facade.Height = Utility.PixelsToEmu(_Height);
+            _facade.BackgroundColor = _backgroundColor;
+            _facade.X = Utility.PixelsToEmu(_x);
+            _facade.Y = Utility.PixelsToEmu(_y);
+            _facade.Width = Utility.PixelsToEmu(_width);
+            _facade.Height = Utility.PixelsToEmu(_height);
         }
 
         /// <summary>
-        /// Method for getting the list of rectangle shapes.
+        /// Retrieves a list of trapezoid objects from their corresponding facades.
         /// </summary>
-        /// <param name="TrapezoidFacades">A list of TrapezoidShapeFacade objects.</param>
-        /// <returns>A list of Trapezoid objects.</returns>
-        public static List<Trapezoid> GetTrapezoids(List<TrapezoidFacade> TrapezoidFacades)
+        /// <param name="trapezoidFacades">A list of <see cref="TrapezoidFacade"/> objects.</param>
+        /// <returns>A list of <see cref="Trapezoid"/> objects.</returns>
+        public static List<Trapezoid> GetTrapezoids(List<TrapezoidFacade> trapezoidFacades)
         {
-            List<Trapezoid> Trapezoids = new List<Trapezoid>();
+            var trapezoids = new List<Trapezoid>();
+
             try
             {
-                foreach (var facade in TrapezoidFacades)
+                foreach (var facade in trapezoidFacades)
                 {
-                    Trapezoid Trapezoid = new Trapezoid
+                    var trapezoid = new Trapezoid
                     {
                         BackgroundColor = facade.BackgroundColor,
                         X = Utility.EmuToPixels(facade.X),
@@ -118,7 +127,7 @@ namespace Openize.Slides
                         ShapeIndex = facade.ShapeIndex
                     };
 
-                    Trapezoids.Add(Trapezoid);
+                    trapezoids.Add(trapezoid);
                 }
             }
             catch (Exception ex)
@@ -127,15 +136,15 @@ namespace Openize.Slides
                 throw new Common.OpenizeException(errorMessage, ex);
             }
 
-            return Trapezoids;
+            return trapezoids;
         }
 
         /// <summary>
-        /// Method to remove the rectangle shape from a slide.
+        /// Removes the trapezoid shape from the slide.
         /// </summary>
         public void Remove()
         {
-            _Facade.RemoveShape(this.Facade.Trapezoid);
+            _facade.RemoveShape(Facade.Trapezoid);
         }
     }
 }
