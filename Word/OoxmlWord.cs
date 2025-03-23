@@ -14,6 +14,7 @@ using FF = Openize.Words.IElements;
 using OWD = OpenXML.Words.Data;
 using OT = OpenXML.Templates;
 using Openize.Words;
+using System.Xml.Linq;
 
 namespace OpenXML.Words
 {
@@ -38,7 +39,7 @@ namespace OpenXML.Words
                     _mainPart.Document = new WP.Document();
                     var tmp = new OT.DefaultTemplate();
                     tmp.CreateMainDocumentPart(_mainPart);
-                    CreateProperties(_pkgDocument);
+                    //CreateProperties(_pkgDocument);
 
                     _numberingPart = _mainPart.NumberingDefinitionsPart;
 
@@ -91,6 +92,7 @@ namespace OpenXML.Words
             }
         }
 
+        /**
         #region Create Core Properties for OpenXML Word Document
         internal void CreateProperties(WordprocessingDocument pkgDocument)
         {
@@ -105,18 +107,54 @@ namespace OpenXML.Words
                 pkgDocument.DeletePart(customPart);
             }
             var coreProperties = new OT.CoreProperties();
+
             var dictCoreProp = new Dictionary<string, string>
             {
                 ["Title"] = "Newly Created OWDocument",
                 ["Subject"] = "WordProcessing OWDocument Generation",
                 ["Keywords"] = "DOCX",
                 ["Description"] = "A WordProcessing OWDocument Created from Scratch.",
-                ["Creator"] = "Openize.Words"
+                ["Creator"] = "Openize.OpenXML-SDK"
             };
             var currentTime = System.DateTime.UtcNow;
             dictCoreProp["Created"] = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
             dictCoreProp["Modified"] = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
             coreProperties.CreateCoreFilePropertiesPart(pkgDocument.AddCoreFilePropertiesPart(), dictCoreProp);
+            var customProperties = new OT.CustomProperties();
+            customProperties.CreateExtendedFilePropertiesPart(pkgDocument.AddExtendedFilePropertiesPart());
+        }
+        #endregion
+        **/
+
+        #region Create Core Properties for OpenXML Word Document
+        internal void CreateProperties(WordprocessingDocument pkgDocument,DocumentProperties documentProperties)
+        {
+            var corePart = pkgDocument.CoreFilePropertiesPart;
+            
+            if (corePart != null)
+            {
+                pkgDocument.DeletePart(corePart);
+            }
+            var dictCoreProp = new Dictionary<string, string>
+            {
+                ["Title"] = documentProperties.Title,
+                ["Subject"] = documentProperties.Subject,
+                ["Creator"] = documentProperties.Creator,
+                ["Keywords"] = documentProperties.Keywords,
+                ["Description"] = documentProperties.Description,
+                ["LastModifiedBy"] = documentProperties.LastModifiedBy,
+                ["Revision"] = documentProperties.Revision,
+                ["Created"] = documentProperties.Created,
+                ["Modified"] = documentProperties.Modified
+            };
+            var coreProperties = new OT.CoreProperties();
+            coreProperties.CreateCoreFilePropertiesPart(pkgDocument.AddCoreFilePropertiesPart(), dictCoreProp);
+
+            var customPart = pkgDocument.CustomFilePropertiesPart;
+            if (customPart != null)
+            {
+                pkgDocument.DeletePart(customPart);
+            }
             var customProperties = new OT.CustomProperties();
             customProperties.CreateExtendedFilePropertiesPart(pkgDocument.AddExtendedFilePropertiesPart());
         }
@@ -135,7 +173,7 @@ namespace OpenXML.Words
         #region Create OpenXML Word Document Contents Based on Openize.Words.IElements
 
         #region Main Method
-        internal void CreateDocument(List<FF.IElement> lst)
+        internal void CreateDocument(List<FF.IElement> lst,DocumentProperties documentProperties)
         {
             try
             {
@@ -185,6 +223,7 @@ namespace OpenXML.Words
                             }
                     }
                 }
+                CreateProperties(_pkgDocument,documentProperties);
             }
             catch (Exception ex)
             {
@@ -1205,6 +1244,8 @@ namespace OpenXML.Words
                     _numberingPart = _mainPart.NumberingDefinitionsPart;
                     _wpBody = _pkgDocument.MainDocumentPart.Document.Body;
 
+                    //LoadProperties(_pkgDocument);
+
                     var sequence = 1;
                     var elements = new List<FF.IElement>();
 
@@ -1311,6 +1352,65 @@ namespace OpenXML.Words
         }
 
         #endregion
+
+        #region Load Core Properties for OpenXML Word Document
+        internal DocumentProperties LoadProperties()
+        {
+            var corePart = _pkgDocument.CoreFilePropertiesPart;
+            DocumentProperties documentProperties = new DocumentProperties();
+
+            if (corePart != null)
+            {
+                // Load the XML document from the CoreFilePropertiesPart
+                XDocument coreXml = XDocument.Load(corePart.GetStream());
+
+                // Define the namespaces used in core properties
+                XNamespace dc = "http://purl.org/dc/elements/1.1/";
+                XNamespace cp = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties";
+                XNamespace dcterms = "http://purl.org/dc/terms/";
+                // Extract metadata values using the appropriate XML elements
+                documentProperties.Title = coreXml.Descendants(dc + "title").FirstOrDefault()?.Value;
+                documentProperties.Subject = coreXml.Descendants(dc + "subject").FirstOrDefault()?.Value;
+                documentProperties.Description = coreXml.Descendants(dc + "description").FirstOrDefault()?.Value;
+                documentProperties.Creator = coreXml.Descendants(dc + "creator").FirstOrDefault()?.Value;
+                documentProperties.Keywords = coreXml.Descendants(cp + "keywords").FirstOrDefault()?.Value;
+                documentProperties.LastModifiedBy = coreXml.Descendants(cp + "lastModifiedBy").FirstOrDefault()?.Value;
+                documentProperties.Revision = coreXml.Descendants(cp + "revision").FirstOrDefault()?.Value;
+                documentProperties.Created = coreXml.Descendants(dcterms + "created").FirstOrDefault()?.Value;
+                documentProperties.Modified = coreXml.Descendants(dcterms + "modified").FirstOrDefault()?.Value;
+            }
+            else
+            {
+                //Console.WriteLine("Core properties not found.");
+            }
+            /**
+            var customPart = pkgDocument.CustomFilePropertiesPart;
+            if (customPart != null)
+            {
+                pkgDocument.DeletePart(customPart);
+            }
+            **/
+            /**
+            var coreProperties = new OT.CoreProperties();
+            var dictCoreProp = new Dictionary<string, string>
+            {
+                ["Title"] = "Newly Created OWDocument",
+                ["Subject"] = "WordProcessing OWDocument Generation",
+                ["Keywords"] = "DOCX",
+                ["Description"] = "A WordProcessing OWDocument Created from Scratch.",
+                ["Creator"] = "Openize.Words"
+            };
+            var currentTime = System.DateTime.UtcNow;
+            dictCoreProp["Created"] = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+            dictCoreProp["Modified"] = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+            coreProperties.CreateCoreFilePropertiesPart(pkgDocument.AddCoreFilePropertiesPart(), dictCoreProp);
+            var customProperties = new OT.CustomProperties();
+            customProperties.CreateExtendedFilePropertiesPart(pkgDocument.AddExtendedFilePropertiesPart());
+            **/
+            return documentProperties;
+        }
+        #endregion
+
 
         #region Load OpenXML Paragraph
         internal FF.Paragraph LoadParagraph(WP.Paragraph wpPara, int id)

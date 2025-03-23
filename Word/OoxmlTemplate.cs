@@ -13121,16 +13121,19 @@ namespace OpenXML.Templates
             //string formattedTime = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
             var title = dict["Title"];// "My Title";//dict["Title"];
             var subject = dict["Subject"];// "My Subject";//dict["Subject"];
+            var creator = dict["Creator"];
             var keywords = dict["Keywords"];//"My Keyword";//dict["Keywords"];
             var description = dict["Description"];// "My Description";//dict["Description"];
-            var creator = dict["Creator"];// "Openize.Words"; //dict["Creator"];
+            var lastModifiedBy = dict["LastModifiedBy"];
+            var revision = dict["Revision"];
             var created = dict["Created"];
             var modified = dict["Modified"];
             var writer = new System.Xml.XmlTextWriter(part.GetStream(
                 System.IO.FileMode.Create), System.Text.Encoding.UTF8);
-            writer.WriteRaw("<?xml version=\"1.0\" encoding=\"utf-8\"?><coreProperties xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:title>" + title + "</dc:title><dc:subject>" + subject + "</dc:subject><keywords>" + keywords + "</keywords><dc:description>" + description + "</dc:description><dcterms:created xsi:type=\"dcterms:W3CDTF\">" + created + "</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">" + modified + "</dcterms:modified><dc:creator>" + creator + "</dc:creator></coreProperties>");
+            writer.WriteRaw("<?xml version=\"1.0\" encoding=\"utf-8\"?><coreProperties xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://schemas.openxmlformats.org/package/2006/metadata/core-properties\"><dc:title>" + title + "</dc:title><dc:subject>" + subject + "</dc:subject><dc:creator>" + creator + "</dc:creator><keywords>" + keywords + "</keywords><dc:description>" + description + "</dc:description><lastModifiedBy>" + lastModifiedBy + "</lastModifiedBy><revision>" + revision + "</revision><dcterms:created xsi:type=\"dcterms:W3CDTF\">" + created + "</dcterms:created><dcterms:modified xsi:type=\"dcterms:W3CDTF\">" + modified + "</dcterms:modified></coreProperties>");
             writer.Flush();
             writer.Close();
+            //System.Console.WriteLine("Title: " + title);
         }
     }
     internal class CustomProperties

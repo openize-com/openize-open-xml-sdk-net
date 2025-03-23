@@ -34,6 +34,7 @@ namespace Openize.Words
     {
         private List<IElement> _lstStructure;
         private ElementStyles _elementStyles;// { get; internal set; }
+        private DocumentProperties _documentProperties = new DocumentProperties();
         private OOXML.OwDocument _ooxmlDoc;
         private bool _isNew = true;
         //private static List<int> _instances = new List<int>();
@@ -115,9 +116,9 @@ namespace Openize.Words
                     {
                         fs.CopyTo(_ms);
                     }
-
                     _ooxmlDoc = OOXML.OwDocument.CreateInstance();
                     _lstStructure = _ooxmlDoc.LoadDocument(_ms);
+                    _documentProperties = _ooxmlDoc.LoadProperties();
                     _elementStyles = _ooxmlDoc.LoadStyles();
                     _originalSize = _lstStructure.Count;
 
@@ -149,6 +150,7 @@ namespace Openize.Words
                     stream.CopyTo(_ms);
                     _ooxmlDoc = OOXML.OwDocument.CreateInstance();
                     _lstStructure = _ooxmlDoc.LoadDocument(_ms);
+                    _documentProperties = _ooxmlDoc.LoadProperties();
                     _elementStyles = _ooxmlDoc.LoadStyles();
                     _originalSize = _lstStructure.Count;
                 }
@@ -174,15 +176,15 @@ namespace Openize.Words
                 {
                     if (!_isNew)
                     {
-                        using var fs = new IO.FileStream(filename, IO.FileMode.Create);
-                        OWD.OoxmlDocData.CreateInstance().Save(fs, this);
+                        using (var fs = new IO.FileStream(filename, IO.FileMode.Create))
+                            OWD.OoxmlDocData.CreateInstance().Save(fs, this);
                     }
                     else
                     {
                         _ooxmlDoc = OOXML.OwDocument.CreateInstance();
-                        _ooxmlDoc.CreateDocument(_lstStructure);
-                        using var fs = new IO.FileStream(filename, IO.FileMode.Create);
-                        _ooxmlDoc.SaveDocument(fs);
+                        _ooxmlDoc.CreateDocument(_lstStructure,_documentProperties);
+                        using (var fs = new IO.FileStream(filename, IO.FileMode.Create))
+                            _ooxmlDoc.SaveDocument(fs);
                     }
                 }
                 catch (Exception ex)
@@ -213,7 +215,7 @@ namespace Openize.Words
                     else
                     {
                         _ooxmlDoc = OOXML.OwDocument.CreateInstance();
-                        _ooxmlDoc.CreateDocument(_lstStructure);
+                        _ooxmlDoc.CreateDocument(_lstStructure,_documentProperties);
                         _ooxmlDoc.SaveDocument(stream);
                     }
                 }
@@ -251,6 +253,20 @@ namespace Openize.Words
         public ElementStyles GetElementStyles()
         {
             return _elementStyles;
+        }
+        /// <summary>
+        /// Gets the core properties of the document.
+        /// </summary>
+        public DocumentProperties GetDocumentProperties()
+        {
+            return _documentProperties;
+        }
+        /// <summary>
+        /// Sets the core properties of the document.
+        /// </summary>
+        public void SetDocumentProperties(DocumentProperties documentProperties)
+        {
+            _documentProperties = documentProperties;
         }
         /// <summary>
         /// Updates an existing element in the structure.
@@ -1033,5 +1049,33 @@ namespace Openize.Words
             }
         }
     }
+
+    public class DocumentProperties
+    {
+        public string Title { get; set; }
+        public string Subject { get; set; }
+        public string Description { get; set; }
+        public string Keywords { get; set; }
+        public string Creator { get; set; }
+        public string LastModifiedBy { get; set; }
+        public string Revision { get; set; }
+        public string Created { get; set; }
+        public string Modified { get; set; }
+
+        public DocumentProperties()
+        {
+            Title = "A WordProcessing Document";
+            Subject = "DOCX document created prgrammatically";
+            Description = "This word document is created programmatically by Openize.OpenXML-SDK for .NET";
+            Keywords = "docx";
+            Creator = "Openize.OpenXML-SDK for .NET";
+            LastModifiedBy = "Openize.OpenXML-SDK for .NET";
+            Revision = "1";
+            var currentTime = System.DateTime.UtcNow;
+            Created = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+            Modified = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+        }
+    }
+
 }
 
