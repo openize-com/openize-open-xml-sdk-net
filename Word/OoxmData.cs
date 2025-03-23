@@ -7,6 +7,7 @@ using WP = DocumentFormat.OpenXml.Wordprocessing;
 using FF = Openize.Words.IElements;
 using Openize.Words;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace OpenXML.Words.Data
 {
@@ -40,6 +41,7 @@ namespace OpenXML.Words.Data
         {
             return new OoxmlDocData(doc);
         }
+
         internal static OoxmlDocData CreateInstance()
         {
             return new OoxmlDocData();
@@ -269,7 +271,6 @@ namespace OpenXML.Words.Data
 
                     _staticDocDict.TryGetValue(doc.GetInstanceInfo(), out WordprocessingDocument staticDoc);
 
-                    //_ooxmlDoc.CreateProperties(_staticDoc);
                     staticDoc.Clone(stream);
                 }
                 catch (Exception ex)
