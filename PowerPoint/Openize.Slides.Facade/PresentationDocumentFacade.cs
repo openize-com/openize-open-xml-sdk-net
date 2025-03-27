@@ -13,12 +13,15 @@ using System.Linq;
 using Openize.Slides.Common;
 using System.Dynamic;
 using P15 = DocumentFormat.OpenXml.Office2013.PowerPoint;
+using DocumentFormat.OpenXml.Drawing.Charts;
 
 namespace Openize.Slides.Facade
 {
     public class PresentationDocumentFacade : IDisposable
     {
-        private static PresentationDocumentFacade _instance = null;
+        private static readonly Dictionary<string, PresentationDocumentFacade> _instances = new Dictionary<string, PresentationDocumentFacade>();
+        private static PresentationDocumentFacade _lastInstance;
+        private static string _FilePath = null;
         private static MemoryStream _MemoryStream = null;
         private PKG.PresentationDocument _PresentationDocument = null;
         private bool disposedValue;
@@ -31,6 +34,8 @@ namespace Openize.Slides.Facade
         private bool isNewPresentation = false;
         private List<SlideFacade> _SlideFacades = null;
         private CommentAuthorsPart _CommentAuthorPart;
+        private Int32Value _slideWidth;
+        private Int32Value _slideHeight;
 
 
 
@@ -43,6 +48,9 @@ namespace Openize.Slides.Facade
         public List<SlideFacade> SlideFacades { get => _SlideFacades; set => _SlideFacades = value; }
         public bool IsNewPresentation { get => isNewPresentation; set => isNewPresentation = value; }
         public CommentAuthorsPart CommentAuthorPart { get => _CommentAuthorPart; set => _CommentAuthorPart = value; }
+        public Int32Value SlideWidth { get => _slideWidth; set => _slideWidth = value; }
+        public Int32Value SlideHeight { get => _slideHeight; set => _slideHeight = value; }
+        public static string FilePath { get => _FilePath; set => _FilePath = value; }
 
         public PKG.PresentationPart GetPresentationPart ()
         {
@@ -55,6 +63,7 @@ namespace Openize.Slides.Facade
             {
                 if (isNewFile)
                 {
+                    _FilePath = FilePath;
                     IsNewPresentation = isNewFile;
                     SlideMasterIdList slideMasterIdList = new SlideMasterIdList(new SlideMasterId() { Id = (UInt32Value)2147483648U, RelationshipId = "rId1" });
 
@@ -70,6 +79,7 @@ namespace Openize.Slides.Facade
                 }
                 else
                 {
+                    _FilePath = FilePath;
                     _PresentationDocument = PKG.PresentationDocument.Open(FilePath, true);
                     _PresentationPart = _PresentationDocument.PresentationPart;
                     _PresentationSlideParts = GetSlideParts(_PresentationPart);
@@ -167,47 +177,51 @@ namespace Openize.Slides.Facade
         public static PresentationDocumentFacade Create (String FilePath)
         {
 
-            if (_instance == null)
+            if (!_instances.ContainsKey(FilePath))
             {
-                _instance = new PresentationDocumentFacade(FilePath, true);
-                return _instance;
+                _instances[FilePath] = new PresentationDocumentFacade(FilePath, true);
             }
-            return _instance;
+            _lastInstance = _instances[FilePath];
+            return _instances[FilePath];
+        }
+
+        public static PresentationDocumentFacade Create(String FilePath,int SlideWidth, int SlideHeight)
+        {
+
+            if (!_instances.ContainsKey(FilePath))
+            {
+                _instances[FilePath] = new PresentationDocumentFacade(FilePath, true);
+            }
+            _lastInstance = _instances[FilePath];
+            return _instances[FilePath];
         }
         public static PresentationDocumentFacade Open (string FilePath)
         {
-            if (_instance == null)
+            if (!_instances.ContainsKey(FilePath))
             {
-                try
-                {
-                    _MemoryStream = new MemoryStream();
-                    using (FileStream fs = new FileStream(FilePath, FileMode.Open))
-                    {
-                        fs.CopyTo(_MemoryStream);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Loading Document");
-                    throw new Common.OpenizeException(errorMessage, ex);
-                }
-
-                _instance = new PresentationDocumentFacade(FilePath, false);
-                return _instance;
+                _instances[FilePath] = new PresentationDocumentFacade(FilePath, false);
             }
-            return _instance;
+            _lastInstance = _instances[FilePath];
+            return _instances[FilePath];
         }
 
-        public static PresentationDocumentFacade getInstance ()
+        public static PresentationDocumentFacade getInstance(string FilePath = null)
         {
-            return _instance;
+            return FilePath != null ? _instances.GetValueOrDefault(FilePath) : _lastInstance;
         }
 
         private void CreatePresentationParts ()
         {
+            // Default values in EMUs
+            const int defaultWidth = 9144000; // 10 inches
+            const int defaultHeight = 6858000; // 7.5 inches
+
+            // Use the class-level values if set, otherwise use defaults
+            Int32Value slideWidth = _slideWidth ?? defaultWidth;
+            Int32Value slideHeight = _slideHeight ?? defaultHeight;
 
             //SlideIdList slideIdList1 = new SlideIdList(new SlideId() { Id = (UInt32Value)256U, RelationshipId = "rId2" });
-            SlideSize slideSize1 = new SlideSize() { Cx = 9144000, Cy = 6858000, Type = SlideSizeValues.Custom };
+            SlideSize slideSize1 = new SlideSize() { Cx = slideWidth, Cy = slideHeight, Type = SlideSizeValues.Custom };
             NotesSize notesSize1 = new NotesSize() { Cx = 6858000, Cy = 9144000 };
             DefaultTextStyle defaultTextStyle1 = new DefaultTextStyle();
 
@@ -537,6 +551,15 @@ namespace Openize.Slides.Facade
             slideFacade.PresentationSlide.Save(slideFacade.SlidePart);
             _PresentationSlideParts.Add(slideFacade.SlidePart);
 
+
+        }
+        public void Clone(SlideFacade slideFacade)
+        {           
+
+            slideFacade.PresentationSlide.Save(slideFacade.SlidePart);
+            _PresentationSlideParts.Add(slideFacade.SlidePart);
+
+
         }
         public void InsertSlide (int index, SlideFacade slideFacade)
         {
@@ -563,50 +586,111 @@ namespace Openize.Slides.Facade
             }
         }
 
-        /// <summary>
-        /// This method releases unmanaged resources. 
-        /// </summary>
-        /// <param name="disposing">A boolean value.</param>
-        protected virtual void Dispose (bool disposing)
+        public void CopySlide(SlideFacade slideFacade)
+        {
+            // Open source and target presentations
+          
+            var targetPresentation = this;
+
+            // Get the source slide part
+            SlidePart sourceSlidePart = slideFacade.SlidePart;
+
+            // Get the target presentation part
+            PresentationPart targetPresentationPart = getInstance(FilePath).GetPresentationPart();
+            SlideIdList targetSlideIdList = targetPresentationPart.Presentation.SlideIdList;
+            uint newSlideId = _SlideIdList.Elements<SlideId>().Max(s => s.Id.Value) + 1;
+
+
+            SlidePart newSlidePart = CopySlidePart(sourceSlidePart, targetPresentationPart);
+
+            SlideId newSlideIdElement = new SlideId()
+            {
+                Id = newSlideId,
+                RelationshipId = _PresentationPart.GetIdOfPart(newSlidePart)
+            };
+            _SlideIdList.Append(newSlideIdElement);
+
+
+        }
+        public static SlidePart CopySlidePart(SlidePart sourceSlidePart, PresentationPart destinationPresentationPart)
+        {
+            SlidePart newSlidePart = destinationPresentationPart.AddNewPart<SlidePart>();
+
+            // Clone slide but prevent locking issues
+            newSlidePart.Slide = (P.Slide)sourceSlidePart.Slide.CloneNode(true);
+
+            // Handle Slide Layout properly
+            if (sourceSlidePart.SlideLayoutPart != null)
+            {
+                SlideLayoutPart destLayoutPart = destinationPresentationPart.SlideMasterParts
+                    .SelectMany(master => master.SlideLayoutParts)
+                    .FirstOrDefault(layout => layout.Uri == sourceSlidePart.SlideLayoutPart.Uri);
+
+                if (destLayoutPart != null)
+                {
+                    newSlidePart.AddPart(destLayoutPart);
+                }
+            }
+
+            newSlidePart.Slide.Save();
+            return newSlidePart;
+        }
+
+
+        public static void Save(string FilePath = null)
+        {
+            var instance = getInstance(FilePath);
+            instance?.Save();
+        }
+
+        private void RemoveParts()
+        {
+            _PresentationDocument = null;
+            _PresentationPart = null;
+            _PresentationSlideParts = null;
+            _CommentAuthorPart = null;
+            _PresentationSlideLayoutParts = null;
+            _SlideIdList = null;
+            _PresentationSlideMasterPart = null;
+            
+        }
+        public void Close(string FilePath = null)
+        {
+            if (FilePath == null)
+            {
+                FilePath = _instances.FirstOrDefault(kvp => kvp.Value == _lastInstance).Key;
+            }
+            if (FilePath != null && _instances.ContainsKey(FilePath))
+            {
+                _instances[FilePath].Save(); // Ensure saving before closing
+                _instances[FilePath].Dispose();
+                _instances.Remove(FilePath);
+                if (_lastInstance == _instances.GetValueOrDefault(FilePath))
+                {
+                    _lastInstance = null;
+                }
+            }
+        }
+
+        public void Save()
+        {
+            _PresentationDocument?.PresentationPart?.Presentation.Save();
+            _PresentationDocument?.Save();
+        }
+        protected virtual void Dispose(bool disposing)
         {
             if (!disposedValue)
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects)
-                    _PresentationDocument.Dispose();
-                    _MemoryStream.Dispose();
+                    _PresentationDocument?.Dispose();
                 }
-
-
                 disposedValue = true;
             }
         }
-        public void Save ()
-        {
-            if (IsNewPresentation)
-            {
-                CreatePresentationParts();
-            }
-            else
-            {
-                _PresentationDocument.Save();
-            }
-            _PresentationDocument.Dispose();
 
-        }
-        public void Save (String FilePath)
+        public void Dispose()
         {
-            _PresentationDocument.Save();
-
-        }
-
-        /// <summary>
-        /// This method releases unmanaged resources. 
-        /// </summary>
-        public void Dispose ()
-        {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }

@@ -1,245 +1,200 @@
-﻿using DocumentFormat.OpenXml.Presentation;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Presentation;
 using Openize.Slides.Facade;
 using System;
 using System.Collections.Generic;
 
 namespace Openize.Slides
 {
-    /// <summary>
-    /// Represents the presentation document.
-    /// </summary>
     public class Presentation
     {
         private static String _FileName = "MyPresentation.pptx";
         private static String _DirectoryPath = "D:\\AsposeSampleResults\\";
         private static PresentationDocumentFacade doc = null;
-        private List<Slide> _Slides;
-        private List<CommentAuthor> _CommentAuthors;
+        private List<Slide> _Slides = null;
+        private List<CommentAuthor> _CommentAuthors = null;
+        private int _SlideWidth = 960;
+        private int _SlideHeight = 720;
+        private string _FilePath = null;
 
+        /// <summary>
+        /// Gets the facade for handling presentation document operations.
+        /// </summary>
         public PresentationDocumentFacade Facade { get => doc; }
 
-
+        /// <summary>
+        /// Gets or sets the slide width of the presentation.
+        /// </summary>
+        public int SlideWidth { get => _SlideWidth; set => _SlideWidth = value; }
 
         /// <summary>
-        /// Initializes the presentation object.
+        /// Gets or sets the slide height of the presentation.
         /// </summary>
-        /// <param name="FilePath">Presentation path as string</param>
-        private Presentation (String FilePath)
+        public int SlideHeight { get => _SlideHeight; set => _SlideHeight = value; }
+
+        /// <summary>
+        /// Gets or sets the file path of the presentation.
+        /// </summary>
+        public string FilePath { get => _FilePath; set => _FilePath = value; }
+
+        /// <summary>
+        /// Initializes a new presentation document with the specified file path.
+        /// </summary>
+        /// <param name="FilePath">The file path for the presentation.</param>
+        private Presentation(String FilePath)
         {
-            _Slides = new List<Slide>();
-            _CommentAuthors = new List<CommentAuthor>();
-            doc = PresentationDocumentFacade.Create(FilePath);
-
+            try
+            {
+                _FilePath = FilePath;
+                _Slides = new List<Slide>();
+                _CommentAuthors = new List<CommentAuthor>();
+                doc = PresentationDocumentFacade.Create(FilePath);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Initializing presentation");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
         }
+
         /// <summary>
-        /// Default constructor to initialize presentation object.
+        /// Initializes an empty presentation.
         /// </summary>
-        private Presentation ()
+        private Presentation()
         {
-            _Slides = new List<Slide>();
-            _CommentAuthors = new List<CommentAuthor>();
-
+            try
+            {
+                _Slides = new List<Slide>();
+                _CommentAuthors = new List<CommentAuthor>();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Initializing empty presentation");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
         }
+
         /// <summary>
-        /// Static method to instantiate a new object of Presentation class.
+        /// Creates a new presentation instance with the specified file path.
         /// </summary>
-        /// <param name="FilePath">Presentation path as string</param>
-        /// <returns>An instance of Presentation object</returns>
-        /// Use this method to create a new, blank presentation that you can populate with content.
-        /// To work with an existing document, consider using the <see cref="Open(string)"/> method.
-        /// <example>
-        /// <code>
-        /// Presentation presentation = Presentation.Create("D:\\AsposeSampleResults\\test2.pptx");
-        /// TextShape shape = new TextShape();
-        /// shape.Text = "Title: Here is my first title From FF";
-        /// TextShape shape2 = new TextShape();
-        /// shape2.Text = "Body : Here is my first title From FF";
-        ///  // First slide
-        /// Slide slide = new Slide();
-        /// slide.AddTextShapes(shape);
-        /// slide.AddTextShapes(shape2);
-        /// // 2nd slide
-        /// Slide slide1 = new Slide();
-        /// slide1.AddTextShapes(shape);
-        /// slide1.AddTextShapes(shape2);
-        /// // Adding slides
-        /// presentation.AppendSlide(slide);
-        /// presentation.AppendSlide(slide1);
-        /// presentation.Save();
-        /// </code>
-        /// </example>
-        public static Presentation Create (String FilePath)
+        /// <param name="FilePath">The file path for the new presentation.</param>
+        public static Presentation Create(String FilePath)
         {
             return new Presentation(FilePath);
         }
-        /// <summary>
-        /// Static method to load an existing presentation.
-        /// </summary>
-        /// <param name="FilePath">Presentation path as string</param>
-        /// <returns></returns>
-        /// <example>
-        /// <code>
-        /// Presentation presentation = Presentation.Open("D:\\AsposeSampleData\\sample.pptx");
-        /// TextShape shape1 = new TextShape();
-        /// shape1.Text = "Title: Here is my first title From FF";
-        /// TextShape shape2 = new TextShape();
-        /// shape2.Text = "Body : Here is my first title From FF";
-        ///  // New slide
-        /// Slide slide = new Slide();
-        /// slide.AddTextShapes(shape1);
-        /// slide.AddTextShapes(shape2);       
-        /// // Adding slide
-        /// presentation.AppendSlide(slide);
-        /// presentation.Save();
-        /// </code>
-        /// </example>
-        public static Presentation Open (String FilePath)
-        {
-            doc = PresentationDocumentFacade.Open(FilePath);
-            return new Presentation();
-        }
-        /// <summary>
-        /// Create comment author using this method
-        /// </summary>
-        /// <param name="author"> Pass comment author object</param>
-        public void CreateAuthor(CommentAuthor author)
-        {
-            doc.CreateAuthor(author.Id, author.ColorIndex, author.Name, author.InitialLetter);
-            _CommentAuthors.Add(author);
-        }
-        /// <summary>
-        /// Get the list of comment author
-        /// </summary>
-        /// <returns></returns>
-        public List<CommentAuthor> GetCommentAuthors()
-        {
-            List<CommentAuthor > authorList = new List<CommentAuthor>();
-            var FacadeAuthors = doc.GetCommentAuthors();
-            foreach(var author in FacadeAuthors)
-            {
-                CommentAuthor commentAuthor = new CommentAuthor();
-                commentAuthor.InitialLetter = author["Initials"];
-                commentAuthor.ColorIndex = Convert.ToInt32(author["ColorIndex"]);
-                commentAuthor.Name = author["Name"];
-                commentAuthor.Id = Convert.ToInt32(author["Id"]);  
-                authorList.Add(commentAuthor);
-            }
-            return authorList;
-        }
-        /// <summary>
-        /// This method is responsible to append a slide.
-        /// </summary>
-        /// <param name="slide">An object of a slide</param>
-        public void AppendSlide (Slide slide)
-        {
-            slide.SlideFacade.SetSlideBackground(slide.BackgroundColor);
-            doc.AppendSlide(slide.SlideFacade);
-            _Slides.Add(slide);
 
-        }
         /// <summary>
-        /// Method to get the list of all slides of a presentation
+        /// Opens an existing presentation file.
         /// </summary>
-        /// <returns></returns>
-        /// <example>
-        /// <code>
-        /// Presentation presentation = Presentation.Open("D:\\AsposeSampleData\\sample.pptx");
-        /// var slides = presentation.GetSlides();
-        /// var slide = slides[0];
-        /// ...
-        /// </code>
-        /// </example>
-        public List<Slide> GetSlides ()
+        /// <param name="FilePath">The file path of the presentation to open.</param>
+        public static Presentation Open(String FilePath)
         {
-            if (!doc.IsNewPresentation)
+            try
             {
-                foreach (var slidepart in doc.PresentationSlideParts)
+                doc = PresentationDocumentFacade.Open(FilePath);
+                return new Presentation();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Opening presentation");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
+        }
+
+        /// <summary>
+        /// Appends a slide to the presentation.
+        /// </summary>
+        /// <param name="slide">The slide object to append.</param>
+        public void AppendSlide(Slide slide)
+        {
+            try
+            {
+                slide.SlideFacade.SetSlideBackground(slide.BackgroundColor);
+                doc.SlideWidth = new Int32Value((int)Common.Utility.PixelsToEmu(SlideWidth));
+                doc.SlideHeight = new Int32Value((int)Common.Utility.PixelsToEmu(SlideHeight));
+                doc.AppendSlide(slide.SlideFacade);
+                _Slides.Add(slide);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Appending slide");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
+        }
+
+        /// <summary>
+        /// Copies a slide from another presentation.
+        /// </summary>
+        /// <param name="slide">The slide object to copy.</param>
+        public void CopySlide(Slide slide)
+        {
+            try
+            {
+                doc.CopySlide(slide.SlideFacade);
+                _Slides.Add(slide);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Copying slide");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
+        }
+
+        /// <summary>
+        /// Retrieves all slides from the presentation.
+        /// </summary>
+        public List<Slide> GetSlides()
+        {
+            try
+            {
+                if (!doc.IsNewPresentation)
                 {
-                    var slide = new Slide(false);
-                    
-                    SlideFacade slideFacade = new SlideFacade(false);
-                    slideFacade.TextShapeFacades = TextShapeFacade.PopulateTextShapes(slidepart);
-                    slideFacade.RectangleShapeFacades = RectangleShapeFacade.PopulateRectangleShapes(slidepart);
-                    slideFacade.ImagesFacade = ImageFacade.PopulateImages(slidepart);
-                    slideFacade.PresentationSlide = slidepart.Slide;
-                    slideFacade.TableFacades= TableFacade.PopulateTables(slidepart);
-                    slideFacade.SlidePart = slidepart;
-                    slideFacade.CommentPart = slidepart.SlideCommentsPart;
-                    slideFacade.NotesPart = slidepart.NotesSlidePart;
-                    slideFacade.RelationshipId = doc.GetSlideRelationshipId(slidepart);
-                    slide.TextShapes = TextShape.GetTextShapes(slideFacade.TextShapeFacades);
-                    slide.Rectangles = Rectangle.GetRectangles(slideFacade.RectangleShapeFacades);
-                    slide.Circles = Circle.GetCircles(slideFacade.CircleShapeFacades);
-                    slide.Images = Image.GetImages(slideFacade.ImagesFacade);
-                    slide.Tables = Table.GetTables(slideFacade.TableFacades);
-                    slide.SlideFacade = slideFacade;
-                    slide.SlidePresentation = this;
-                    _Slides.Add(slide);
+                    foreach (var slidepart in doc.PresentationSlideParts)
+                    {
+                        var slide = new Slide(false);
+                        slide.SlideFacade = new SlideFacade(false);
+                        _Slides.Add(slide);
+                    }
                 }
+                return _Slides;
             }
-            return _Slides;
-
-        }
-        /// <summary>
-        /// Extract and save images of a presentation into a director
-        /// </summary>
-        /// <param name="outputFolder">Folder path as string</param>
-        public void ExtractAndSaveImages (string outputFolder)
-        {
-            doc.ExtractAndSaveImages(outputFolder);
-        }
-        /// <summary>
-        /// Method to remove a slide at a specific index
-        /// </summary>
-        /// <param name="slideIndex">Index of a slide</param>  
-        /// <example>
-        /// <code>
-        /// Presentation presentation = Presentation.Open("D:\\AsposeSampleData\\sample.pptx");
-        /// var confirmation = presentation.RemoveSlide(0);
-        /// Console.WriteLine(confirmation);
-        /// presentation.Save();
-        /// </code>
-        /// </example>
-        public String RemoveSlide (int slideIndex)
-        {
-            return doc.RemoveSlide(slideIndex);
-        }
-        /// <summary>
-        /// Method to remove comment author.
-        /// </summary>
-        /// <param name="author"></param>
-        public void RemoveCommentAuthor(CommentAuthor author)
-        {
-            doc.RemoveCommentAuthor(author.Id);
-            _CommentAuthors.Remove(author);
-        }
-        /// <summary>
-        /// Method to insert a slide at a specific index
-        /// </summary>
-        /// <param name="index">Index of a slide</param>
-        /// <param name="slide">A slide object</param>
-        public void InsertSlideAt (int index, Slide slide)
-        {
-            slide.SlideIndex = index;
-            slide.SlideFacade.SlideIndex = index;
-            doc.InsertSlide(index, slide.SlideFacade);
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Getting slides");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
         }
 
         /// <summary>
-        /// This method exports all existing notes of a PPT/PPTX to TXT file.
+        /// Saves the presentation document.
         /// </summary>
-        /// <param name="filePath"> File path where to save TXT file</param>
-        public void SaveAllNotesToTextFile(string filePath)
+        public void Save()
         {
-            doc.SaveAllNotesToTextFile(filePath);
+            try
+            {
+                doc.Close(FilePath);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Saving presentation");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
         }
-        /// <summary>
-        /// Method to save the new or changed presentation.
-        /// </summary>
-        public void Save ()
-        {
-            doc.Save();
 
+        /// <summary>
+        /// Closes the presentation document.
+        /// </summary>
+        public void Close()
+        {
+            try
+            {
+                doc.Close(FilePath);
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Closing presentation");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
         }
     }
 }
