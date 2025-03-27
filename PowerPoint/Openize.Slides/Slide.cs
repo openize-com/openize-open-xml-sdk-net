@@ -697,8 +697,23 @@ namespace Openize.Slides
                 throw new Common.OpenizeException(errorMessage, ex);
             }
 
-        }        
-
+        } 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="Common.OpenizeException"></exception>
+        public void Clone()
+        {
+            try
+            {
+                _SlideFacade.Clone();
+            }
+            catch (Exception ex)
+            {
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Creating Clone");
+                throw new Common.OpenizeException(errorMessage, ex);
+            }
+        }
         /// <summary>
         /// Get text shapes by searching a text term.
         /// </summary>

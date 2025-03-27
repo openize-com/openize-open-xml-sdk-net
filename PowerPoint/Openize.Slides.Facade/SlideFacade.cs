@@ -13,13 +13,14 @@ using NonVisualGroupShapeProperties = DocumentFormat.OpenXml.Presentation.NonVis
 using P14 = DocumentFormat.OpenXml.Office2010.PowerPoint;
 using Openize.Slides.Common.Enumerations;
 using Openize.Slides.Common;
+using System.IO;
 namespace Openize.Slides.Facade
 {
     public class SlideFacade
     {
-
+        
         private P.Slide _PresentationSlide = null;
-        private SlidePart _SlidePart = null;
+        private SlidePart _SlidePart = null; 
 
         private String _RelationshipId;
         private int _SlideIndex;
@@ -65,7 +66,7 @@ namespace Openize.Slides.Facade
 
         private NotesSlidePart _NotesPart;
 
-
+       
 
         public P.Slide PresentationSlide { get => _PresentationSlide; set => _PresentationSlide = value; }
         public string RelationshipId { get => _RelationshipId; set => _RelationshipId = value; }
@@ -92,9 +93,9 @@ namespace Openize.Slides.Facade
         public List<HexagonFacade> HexagonFacades { get => _HexagonFacades; set => _HexagonFacades = value; }
         public List<TrapezoidFacade> TrapezoidFacades { get => _TrapezoidFacades; set => _TrapezoidFacades = value; }
         public List<PieFacade> PieFacades { get => _PieFacades; set => _PieFacades = value; }
+        
 
-
-        public SlideFacade(bool isNewSlide)
+        public SlideFacade (bool isNewSlide)
         {
             if (isNewSlide)
             {
@@ -103,7 +104,7 @@ namespace Openize.Slides.Facade
                 var _PresentationPart = PresentationDocumentFacade.getInstance().GetPresentationPart();
                 var _SlideIdList = _PresentationPart.Presentation.SlideIdList;
                 _SlideIdList.Append(new SlideId() { Id = (UInt32Value)Utility.GetRandomSlideId(), RelationshipId = _RelationshipId });
-
+               
                 _PresentationSlide = new P.Slide(
                     new CommonSlideData(
                          new ShapeTree(
@@ -118,8 +119,48 @@ namespace Openize.Slides.Facade
                 if (PresentationDocumentFacade.getInstance().PresentationSlideLayoutParts.Count != 0)
                     _SlidePart.AddPart(PresentationDocumentFacade.getInstance().PresentationSlideLayoutParts[0]);
             }
+         }
+        public void Clone()
+        {
+          
+            var _PresentationPart = PresentationDocumentFacade.getInstance().GetPresentationPart();
+            var _SlideIdList = _PresentationPart.Presentation.SlideIdList;
+            uint newSlideId = _SlideIdList.Elements<SlideId>().Max(s => s.Id.Value) + 1;
+            var newSlidePart = CloneSlidePart(_SlidePart, _PresentationPart);
+            SlideId newSlideIdElement = new SlideId()
+            {
+                Id = newSlideId,
+                RelationshipId = _PresentationPart.GetIdOfPart(newSlidePart)
+            };
+            _SlideIdList.Append(newSlideIdElement);
+
         }
-        public void SetSlideBackground(string color)
+        public static SlidePart CloneSlidePart(SlidePart sourceSlidePart, PresentationPart destinationPresentationPart)
+        {
+            SlidePart newSlidePart = destinationPresentationPart.AddNewPart<SlidePart>();
+            
+            // Clone slide but prevent locking issues
+            newSlidePart.Slide = (P.Slide)sourceSlidePart.Slide.CloneNode(true);
+
+            // Handle Slide Layout properly
+            if (sourceSlidePart.SlideLayoutPart != null)
+            {
+                SlideLayoutPart destLayoutPart = destinationPresentationPart.SlideMasterParts
+                    .SelectMany(master => master.SlideLayoutParts)
+                    .FirstOrDefault(layout => layout.Uri == sourceSlidePart.SlideLayoutPart.Uri);
+
+                if (destLayoutPart != null)
+                {
+                    newSlidePart.AddPart(destLayoutPart);
+                }
+            }
+
+            newSlidePart.Slide.Save();
+            return newSlidePart;
+        }
+
+
+        public void SetSlideBackground (string color)
         {
             // Check if color is not null or empty
             if (!string.IsNullOrEmpty(color))
@@ -146,7 +187,7 @@ namespace Openize.Slides.Facade
                 _PresentationSlide.CommonSlideData.InsertBefore(newBackground, _PresentationSlide.CommonSlideData.ShapeTree);
             }
         }
-
+        
         public IEnumerable<Dictionary<string, string>> GetComments()
         {
             List<Dictionary<string, string>> comments = new List<Dictionary<string, string>>();
@@ -172,7 +213,7 @@ namespace Openize.Slides.Facade
             }
             return comments;
         }
-        public TextShapeFacade AddTextShape(String text, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y,
+        public TextShapeFacade AddTextShape (String text, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y, 
             Int64 width, Int64 height, String fontFamily, String textColor, String backgroundColor)
         {
             // Create an instance of TextShapeFacade
@@ -709,7 +750,7 @@ namespace Openize.Slides.Facade
             }
             return _PieFacade;
         }
-        public TextShapeFacade AddTextListShape(List<String> textList, ListFacade facade, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y,
+        public TextShapeFacade AddTextListShape (List<String> textList, ListFacade facade, Int32 fontSize, TextAlignment alignment, Int64 _x, Int64 _y,
             Int64 width, Int64 height, String fontFamily, String textColor, String backgroundColor)
         {
             // Create an instance of TextShapeFacade
@@ -726,7 +767,7 @@ namespace Openize.Slides.Facade
                 .WithSize(width, height);
 
             // Create the P.Shape using the CreateShape method
-            P.Shape textBoxShape = textShapeFacade.CreateListShape(textList, facade);
+            P.Shape textBoxShape = textShapeFacade.CreateListShape(textList,facade);
 
             // Append the textBoxShape to the ShapeTree of the presentation slide
             if (_PresentationSlide.CommonSlideData.ShapeTree == null)
@@ -743,7 +784,7 @@ namespace Openize.Slides.Facade
 
             return textShapeFacade;
         }
-        public TextShapeFacade AddTextShape(List<TextSegmentFacade> textSegmentFacades, TextAlignment alignment, Int64 _x, Int64 _y,
+        public TextShapeFacade AddTextShape ( List<TextSegmentFacade> textSegmentFacades,TextAlignment alignment, Int64 _x, Int64 _y,
            Int64 width, Int64 height, String backgroundColor)
         {
             // Create an instance of TextShapeFacade
@@ -777,7 +818,7 @@ namespace Openize.Slides.Facade
         public void AddNote(String noteText)
         {
             var relId = _RelationshipId;
-
+           
             NotesSlidePart notesSlidePart1;
             string existingSlideNote = noteText;
 
@@ -835,20 +876,20 @@ namespace Openize.Slides.Facade
                 _SlidePart.DeletePart(_SlidePart.NotesSlidePart);
             }
         }
-        public void AddImage(ImageFacade picture)
+        public void  AddImage (ImageFacade picture )
         {
             _PresentationSlide.CommonSlideData.ShapeTree.Append(picture.Image);
         }
-
-        public void Update()
+       
+        public void Update ()
         {
             this.SetSlideBackground(_BackgroundColor);
         }
         private void CallAnimation(string shapeId, AnimationType animation)
         {
-
+           
             AnimateFacade animateFacade = new AnimateFacade();
-            animateFacade.Type = animation.ToString();
+           animateFacade.Type= animation.ToString();
 
             // Optionally, override default properties
             animateFacade.ShapeId = shapeId; // You can change the ShapeId if needed
