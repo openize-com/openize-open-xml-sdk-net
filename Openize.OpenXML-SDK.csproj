@@ -6,9 +6,9 @@
 	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 	  <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
 	  <Description>A .NET library that simplifies working with OpenXML documents. Create, read, and manipulate Wordprocessing documents (Docx), Excel spreadsheets (Xlsx), and PowerPoint presentations (Pptx) effortlessly with Openize.OpenXML SDK. Licensed under MIT.</Description>
-	  <ReleaseVersion>25.3.2</ReleaseVersion>
+	  <ReleaseVersion>25.4.1</ReleaseVersion>
 	  <SynchReleaseVersion>false</SynchReleaseVersion>
-	  <PackageVersion>25.3.2</PackageVersion>
+	  <PackageVersion>25.4.1</PackageVersion>
 	  <Authors>Openize Pty Ltd</Authors>
 	  <Copyright>2024-2025</Copyright>
 	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
