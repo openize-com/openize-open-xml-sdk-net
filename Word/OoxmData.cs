@@ -8,6 +8,7 @@ using FF = Openize.Words.IElements;
 using Openize.Words;
 using System.Linq;
 using System.Xml.Linq;
+using System.IO;
 
 namespace OpenXML.Words.Data
 {
@@ -261,6 +262,141 @@ namespace OpenXML.Words.Data
                 }
             }
         }
+
+        /**
+        internal void UpdateProperties(Document doc)
+        {
+            _staticDocDict.TryGetValue(doc.GetInstanceInfo(), out WordprocessingDocument staticDoc);
+            DocumentProperties documentProperties = doc.GetDocumentProperties();
+            staticDoc.Save(); 
+            var corePart = staticDoc.CoreFilePropertiesPart;
+            XDocument coreXml;
+
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                // Read the core properties XML into memory
+                using (Stream readStream = corePart.GetStream(FileMode.Open, FileAccess.Read))
+                {
+                    readStream.CopyTo(memoryStream);
+                }
+
+                memoryStream.Position = 0;
+                coreXml = XDocument.Load(memoryStream);
+            }
+
+            // Define the XML namespace for Dublin Core metadata
+            XNamespace dc = "http://purl.org/dc/elements/1.1/";
+            XNamespace cp = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties";
+            XNamespace dcterms = "http://purl.org/dc/terms/";
+
+            // Find or create the <dc:title> element
+            var titleElement = coreXml.Descendants(dc + "title").FirstOrDefault();
+            if (titleElement != null)
+            {
+                titleElement.Value = documentProperties.Title; // Update existing title
+            }
+            else
+            {
+                coreXml.Root.Add(new XElement(dc + "title", documentProperties.Title)); // Add title if missing
+            }
+
+            // Find or create the <dc:subject> element
+            var subjectElement = coreXml.Descendants(dc + "subject").FirstOrDefault();
+            if (subjectElement != null)
+            {
+                subjectElement.Value = documentProperties.Subject; // Update existing subject
+            }
+            else
+            {
+                coreXml.Root.Add(new XElement(dc + "subject", documentProperties.Subject)); // Add subject if missing
+            }
+
+            // Find or create the <dc:creator> element
+            var creatorElement = coreXml.Descendants(dc + "creator").FirstOrDefault();
+            if (creatorElement != null)
+            {
+                creatorElement.Value = documentProperties.Creator; // Update existing creator
+            }
+            else
+            {
+                coreXml.Root.Add(new XElement(dc + "creator", documentProperties.Creator)); // Add creator if missing
+            }
+
+            // Find or create the <cp:keywords> element
+            var keywordsElement = coreXml.Descendants(cp + "keywords").FirstOrDefault();
+            if (keywordsElement != null)
+            {
+                keywordsElement.Value = documentProperties.Keywords; // Update existing keywords
+            }
+            else
+            {
+                coreXml.Root.Add(new XElement(cp + "keywords", documentProperties.Keywords)); // Add keywords if missing
+            }
+
+            // Save the updated XML back to the CoreFilePropertiesPart
+            using (Stream writeStream = corePart.GetStream(FileMode.Create, FileAccess.Write))
+            {
+                coreXml.Save(writeStream);
+            }
+
+            staticDoc.Save(); // Save the document after updating properties
+        }
+        **/
+
+        internal void UpdateProperties(Document doc)
+        {
+            _staticDocDict.TryGetValue(doc.GetInstanceInfo(), out WordprocessingDocument staticDoc);
+            DocumentProperties documentProperties = doc.GetDocumentProperties();
+
+            staticDoc.Save();
+            var corePart = staticDoc.CoreFilePropertiesPart;
+
+            XDocument coreXml;
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var readStream = corePart.GetStream(FileMode.Open, FileAccess.Read))
+                {
+                    readStream.CopyTo(memoryStream);
+                }
+
+                memoryStream.Position = 0;
+                coreXml = XDocument.Load(memoryStream);
+            }
+
+            XNamespace dc = "http://purl.org/dc/elements/1.1/";
+            XNamespace cp = "http://schemas.openxmlformats.org/package/2006/metadata/core-properties";
+            XNamespace dcterms = "http://purl.org/dc/terms/";
+
+            // Helper to update or insert a value
+            void UpdateElement(XNamespace ns, string name, string value)
+            {
+                if (string.IsNullOrWhiteSpace(value)) return;
+
+                var element = coreXml.Descendants(ns + name).FirstOrDefault();
+                if (element != null)
+                    element.Value = value;
+                else
+                    coreXml.Root.Add(new XElement(ns + name, value));
+            }
+
+            UpdateElement(dc, "title", documentProperties.Title);
+            UpdateElement(dc, "subject", documentProperties.Subject);
+            UpdateElement(dc, "description", documentProperties.Description);
+            UpdateElement(dc, "creator", documentProperties.Creator);
+            UpdateElement(cp, "keywords", documentProperties.Keywords);
+            UpdateElement(cp, "lastModifiedBy", documentProperties.LastModifiedBy);
+            UpdateElement(cp, "revision", documentProperties.Revision);
+            UpdateElement(dcterms, "created", documentProperties.Created);
+            UpdateElement(dcterms, "modified", documentProperties.Modified);
+
+            using (var writeStream = corePart.GetStream(FileMode.Create, FileAccess.Write))
+            {
+                coreXml.Save(writeStream);
+            }
+
+            staticDoc.Save();
+        }
+
 
         internal void Save(System.IO.Stream stream, Document doc)
         {

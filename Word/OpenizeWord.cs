@@ -267,6 +267,7 @@ namespace Openize.Words
         public void SetDocumentProperties(DocumentProperties documentProperties)
         {
             _documentProperties = documentProperties;
+            if(!_isNew) OWD.OoxmlDocData.CreateInstance().UpdateProperties(this);
         }
         /// <summary>
         /// Updates an existing element in the structure.
