@@ -13,7 +13,10 @@ Openize.OpenXML SDK for .NET is a powerful and easy-to-use wrapper around the Op
 3. **PowerPoint:** Contains source code for working with PowerPoint presentations.
 
 ## Installation
-This project is licensed under the MIT License, so you can freely use it in your projects. To include Openize.OpenXML SDK for .NET in your application, simply clone the repository or add the library to your project via NuGet (coming soon).
+This project is licensed under the MIT License, so you can freely use it in your projects. To include Openize.OpenXML SDK for .NET in your application, simply clone the repository or add the library to your project via NuGet:
+```bash
+dotnet add package Openize.OpenXML-SDK
+```
 
 ## Usage
 
