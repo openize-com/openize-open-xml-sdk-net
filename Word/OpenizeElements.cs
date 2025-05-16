@@ -504,6 +504,16 @@ namespace Openize.Words.IElements
         public ShapeType Type { get; set; }
 
         /// <summary>
+        /// Gets or sets the fill type of the shape
+        /// </summary>
+        public ShapeFillType FillType { get; set; }
+
+        /// <summary>
+        /// Gets or sets the fill colors of the shape
+        /// </summary>
+        public ShapeFillColors FillColors { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Shape"/> class.
         /// </summary>
         public Shape()
@@ -530,6 +540,31 @@ namespace Openize.Words.IElements
             Width = width;
             Height = height;
             Type = shapeType;
+            FillType = ShapeFillType.None;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Shape"/> class with more detailed values.
+        /// </summary>
+        /// <param name="x">x position of the shape.</param>
+        /// <param name="y">y position of the shape.</param>
+        /// <param name="width">Width of the shape.</param>
+        /// <param name="height">Height of the shape.</param>
+        /// <param name="shapeType">Type of the shape (e.g rectangle, ellipse etc).</param>
+        /// <param name="shapeFillType">Fill type of the shape (e.g solid, gradient, pattern).</param>
+        /// <param name="shapeFillColors">Fill colors of the shape.</param>
+        public Shape(int x, int y, int width, int height,
+            ShapeType shapeType,
+            ShapeFillType shapeFillType,
+            ShapeFillColors shapeFillColors)
+        {
+            X = x;
+            Y = y;
+            Width = width;
+            Height = height;
+            Type = shapeType;
+            FillType = shapeFillType;
+            FillColors = shapeFillColors;
         }
     }
 
@@ -605,6 +640,63 @@ namespace Openize.Words.IElements
         /// Hexagone shape.
         /// </summary>
         Hexagone
+    }
+
+    /// <summary>
+    /// Specifies the fill type of a shape within the word document.
+    /// </summary>
+    public enum ShapeFillType
+    {
+        /// <summary>
+        /// Solid fill.
+        /// </summary>
+        Solid,
+
+        /// <summary>
+        /// Gradient fill.
+        /// </summary>
+        Gradient,
+
+        /// <summary>
+        /// Pattern fill.
+        /// </summary>
+        Pattern,
+
+        /// <summary>
+        /// Default fill.
+        /// </summary>
+        None
+    }
+
+    /// <summary>
+    /// Represents shape fill colors.
+    /// </summary>
+    public class ShapeFillColors
+    {
+        /// <summary>
+        /// Initializes with default colors.
+        /// </summary>
+        public ShapeFillColors()
+        {
+            Color1 = Colors.Red;
+            Color2 = Colors.Purple;
+        }
+
+        public ShapeFillColors(string color1,string color2)
+        {
+            Color1 = color1;
+            Color2 = color2;
+        }
+
+        /// <summary>
+        /// Gets or sets the first color in gradient/pattern fill and/or color in solid fill
+        /// </summary>
+        public string Color1 { get; set; }
+
+        /// <summary>
+        /// Gets or sets the second color in gradient/pattern fill
+        /// </summary>
+        public string Color2 { get; set; }
     }
 
     /// <summary>

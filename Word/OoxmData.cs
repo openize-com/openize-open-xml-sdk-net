@@ -75,7 +75,9 @@ namespace OpenXML.Words.Data
                     switch (newElement)
                     {
                         case FF.Paragraph ffPara:
-                            var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            //var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            var wpPara = OoxmlParagraph.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                             elements.ElementAt(position).InsertBeforeSelf(wpPara);
                             break;
 
@@ -137,7 +139,9 @@ namespace OpenXML.Words.Data
                         switch (newElement)
                         {
                             case FF.Paragraph ffPara:
-                                var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                                //var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                                var wpPara = OoxmlParagraph.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpPara);
                                 break;
 
@@ -224,7 +228,9 @@ namespace OpenXML.Words.Data
                     switch (newElement)
                     {
                         case FF.Paragraph ffPara:
-                            var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            //var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            var wpPara = OoxmlParagraph.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpPara, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpPara);
                             break;
