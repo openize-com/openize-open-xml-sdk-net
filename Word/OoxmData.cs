@@ -89,7 +89,9 @@ namespace OpenXML.Words.Data
                             break;
 
                         case FF.Image ffImage:
-                            var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            //var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            var wpImage = OoxmlImage.CreateInstance(
+                                _ooxmlDoc.MainPart).CreateImage(ffImage);
                             elements.ElementAt(position).InsertBeforeSelf(wpImage);
                             break;
 
@@ -142,17 +144,19 @@ namespace OpenXML.Words.Data
                             case FF.Paragraph ffPara:
                                 //var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
                                 var wpPara = OoxmlParagraph.CreateInstance(
-                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
+                                   _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpPara);
                                 break;
 
                             case FF.Table ffTable:
                                 var wpTable = OoxmlTable.CreateInstance(
-                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
+                                   _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpTable);
                                 break;
                             case FF.Image ffImage:
-                                var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                                //var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                                var wpImage = OoxmlImage.CreateInstance(
+                                   _ooxmlDoc.MainPart).CreateImage(ffImage);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpImage);
                                 break;
 
@@ -243,7 +247,9 @@ namespace OpenXML.Words.Data
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpTable);
                             break;
                         case FF.Image ffImage:
-                            var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            //var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            var wpImage = OoxmlImage.CreateInstance(
+                                   _ooxmlDoc.MainPart).CreateImage(ffImage);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpImage, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpImage);
                             break;
