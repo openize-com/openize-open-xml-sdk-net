@@ -83,7 +83,8 @@ namespace OpenXML.Words.Data
 
 
                         case FF.Table ffTable:
-                            var wpTable = _ooxmlDoc.CreateTable(ffTable);
+                            var wpTable = OoxmlTable.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                             elements.ElementAt(position).InsertBeforeSelf(wpTable);
                             break;
 
@@ -146,7 +147,8 @@ namespace OpenXML.Words.Data
                                 break;
 
                             case FF.Table ffTable:
-                                var wpTable = _ooxmlDoc.CreateTable(ffTable);
+                                var wpTable = OoxmlTable.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpTable);
                                 break;
                             case FF.Image ffImage:
@@ -235,7 +237,8 @@ namespace OpenXML.Words.Data
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpPara);
                             break;
                         case FF.Table ffTable:
-                            var wpTable = _ooxmlDoc.CreateTable(ffTable);
+                            var wpTable = OoxmlTable.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpTable, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpTable);
                             break;
