@@ -1,20 +1,13 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 using DF = DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using WP = DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
 using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
-using DWG = DocumentFormat.OpenXml.Office2010.Word.DrawingGroup;
-using DWS = DocumentFormat.OpenXml.Office2010.Word.DrawingShape;
 using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 using FF = Openize.Words.IElements;
 using OWD = OpenXML.Words.Data;
-using OT = OpenXML.Templates;
-using Openize.Words;
-using System.Xml.Linq;
 
 namespace OpenXML.Words
 {

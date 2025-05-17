@@ -96,7 +96,8 @@ namespace OpenXML.Words.Data
                             break;
 
                         case FF.Shape ffShape:
-                            var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            //var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            var wpShape = OoxmlShape.CreateInstance().CreateShape(ffShape);
                             elements.ElementAt(position).InsertBeforeSelf(wpShape);
                             break;
 
@@ -161,7 +162,8 @@ namespace OpenXML.Words.Data
                                 break;
 
                             case FF.Shape ffShape:
-                                var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                                //var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                                var wpShape = OoxmlShape.CreateInstance().CreateShape(ffShape);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpShape);
                                 break;
 
@@ -254,7 +256,8 @@ namespace OpenXML.Words.Data
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpImage);
                             break;
                         case FF.Shape ffShape:
-                            var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            //var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            var wpShape = OoxmlShape.CreateInstance().CreateShape(ffShape);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpShape, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpShape);
                             break;
