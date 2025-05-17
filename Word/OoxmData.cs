@@ -102,7 +102,9 @@ namespace OpenXML.Words.Data
                             break;
 
                         case FF.GroupShape ffGroupShape:
-                            var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            //var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            var wpGroupShape = OoxmlGroupShape.CreateInstance().
+                                CreateGroupShape(ffGroupShape);
                             elements.ElementAt(position).InsertBeforeSelf(wpGroupShape);
                             break;
                     }
@@ -168,7 +170,9 @@ namespace OpenXML.Words.Data
                                 break;
 
                             case FF.GroupShape ffGroupShape:
-                                var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                                //var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                                var wpGroupShape = OoxmlGroupShape.CreateInstance().
+                                    CreateGroupShape(ffGroupShape);
                                 elements.ElementAt(position).InsertBeforeSelf(wpGroupShape);
                                 break;
                         }
@@ -263,7 +267,9 @@ namespace OpenXML.Words.Data
                             break;
 
                         case FF.GroupShape ffGroupShape:
-                            var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            //var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            var wpGroupShape = OoxmlGroupShape.CreateInstance().
+                                CreateGroupShape(ffGroupShape);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpGroupShape, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpGroupShape);
                             break;
