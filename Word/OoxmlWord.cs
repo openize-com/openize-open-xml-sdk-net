@@ -6,10 +6,6 @@ using DF = DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using WP = DocumentFormat.OpenXml.Wordprocessing;
 using A = DocumentFormat.OpenXml.Drawing;
-using DW = DocumentFormat.OpenXml.Drawing.Wordprocessing;
-using DWG = DocumentFormat.OpenXml.Office2010.Word.DrawingGroup;
-using DWS = DocumentFormat.OpenXml.Office2010.Word.DrawingShape;
-//using PIC = DocumentFormat.OpenXml.Drawing.Pictures;
 using FF = Openize.Words.IElements;
 using OWD = OpenXML.Words.Data;
 using OT = OpenXML.Templates;
@@ -144,9 +140,6 @@ namespace OpenXML.Words
             return new OwDocument(pkg);
         }
 
-        #region Create OpenXML Word Document Contents Based on Openize.Words.IElements
-
-        #region Main Method
         internal void CreateDocument(List<FF.IElement> lst,DocumentProperties documentProperties)
         {
             try
@@ -207,31 +200,6 @@ namespace OpenXML.Words
             }
 
         }
-        #endregion
-
-        #region Create OpenXML Paragraph
-        #endregion
-
-        #region Create OpenXML Table
-        #endregion
-
-        #region Create OpenXML Image
-        #endregion
-
-        #region Create OpenXML Shape        
-
-        #region "Create Group Shape with connector"
-        
-
-        #endregion
-
-        #endregion
-
-        #endregion
-
-        #region Load OpenXML Word Document Content into Openize.Words.IElements
-
-        #region Main Method
         internal List<FF.IElement> LoadDocument(Stream stream)
         {
             lock (_lockObject)
@@ -357,9 +325,6 @@ namespace OpenXML.Words
             }
         }
 
-        #endregion
-
-        #region Load Core Properties for OpenXML Word Document
         internal DocumentProperties LoadProperties()
         {
             var corePart = _pkgDocument.CoreFilePropertiesPart;
@@ -389,49 +354,8 @@ namespace OpenXML.Words
             {
                 //Console.WriteLine("Core properties not found.");
             }
-            /**
-            var customPart = pkgDocument.CustomFilePropertiesPart;
-            if (customPart != null)
-            {
-                pkgDocument.DeletePart(customPart);
-            }
-            **/
-            /**
-            var coreProperties = new OT.CoreProperties();
-            var dictCoreProp = new Dictionary<string, string>
-            {
-                ["Title"] = "Newly Created OWDocument",
-                ["Subject"] = "WordProcessing OWDocument Generation",
-                ["Keywords"] = "DOCX",
-                ["Description"] = "A WordProcessing OWDocument Created from Scratch.",
-                ["Creator"] = "Openize.Words"
-            };
-            var currentTime = System.DateTime.UtcNow;
-            dictCoreProp["Created"] = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
-            dictCoreProp["Modified"] = currentTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
-            coreProperties.CreateCoreFilePropertiesPart(pkgDocument.AddCoreFilePropertiesPart(), dictCoreProp);
-            var customProperties = new OT.CustomProperties();
-            customProperties.CreateExtendedFilePropertiesPart(pkgDocument.AddExtendedFilePropertiesPart());
-            **/
             return documentProperties;
         }
-        #endregion
-
-
-        #region Load OpenXML Paragraph
-
-        #endregion
-
-        #region Load OpenXML Image
-        
-        #endregion
-
-
-        #region Load OpenXML Table
-        
-        #endregion
-
-        #region Load OpenXML Section
         internal FF.Section LoadSection(WP.SectionProperties sectPr, int id)
         {
             lock (_lockObject)
@@ -479,9 +403,6 @@ namespace OpenXML.Words
                 }
             }
         }
-        #endregion
-
-        #region Load OpenXML Styles
         internal FF.ElementStyles LoadStyles()
         {
             lock (_lockObject)
@@ -554,9 +475,6 @@ namespace OpenXML.Words
                 }
             }
         }
-        #endregion
-
-        #endregion
 
         #region Save OpenXML Word Document to Stream
         internal void SaveDocument(Stream stream)
@@ -566,13 +484,9 @@ namespace OpenXML.Words
                 try
                 {
                     _pkgDocument.Clone(stream);
-                    //_pkgDocument.Dispose();
-                    //_ms.Dispose();
                 }
                 catch (Exception ex)
                 {
-                    //var errorMessage = OWD.OoxmlDocData.ConstructMessage(ex, "Save OOXML OWDocument");
-                    //throw new OpenizeException(errorMessage, ex);
                     throw new Exception(ex.Message);
                 }
             }
