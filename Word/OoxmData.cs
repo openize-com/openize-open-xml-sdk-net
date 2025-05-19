@@ -75,28 +75,36 @@ namespace OpenXML.Words.Data
                     switch (newElement)
                     {
                         case FF.Paragraph ffPara:
-                            var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            //var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            var wpPara = OoxmlParagraph.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                             elements.ElementAt(position).InsertBeforeSelf(wpPara);
                             break;
 
 
                         case FF.Table ffTable:
-                            var wpTable = _ooxmlDoc.CreateTable(ffTable);
+                            var wpTable = OoxmlTable.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                             elements.ElementAt(position).InsertBeforeSelf(wpTable);
                             break;
 
                         case FF.Image ffImage:
-                            var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            //var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            var wpImage = OoxmlImage.CreateInstance(
+                                _ooxmlDoc.MainPart).CreateImage(ffImage);
                             elements.ElementAt(position).InsertBeforeSelf(wpImage);
                             break;
 
                         case FF.Shape ffShape:
-                            var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            //var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            var wpShape = OoxmlShape.CreateInstance().CreateShape(ffShape);
                             elements.ElementAt(position).InsertBeforeSelf(wpShape);
                             break;
 
                         case FF.GroupShape ffGroupShape:
-                            var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            //var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            var wpGroupShape = OoxmlGroupShape.CreateInstance().
+                                CreateGroupShape(ffGroupShape);
                             elements.ElementAt(position).InsertBeforeSelf(wpGroupShape);
                             break;
                     }
@@ -137,26 +145,34 @@ namespace OpenXML.Words.Data
                         switch (newElement)
                         {
                             case FF.Paragraph ffPara:
-                                var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                                //var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                                var wpPara = OoxmlParagraph.CreateInstance(
+                                   _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpPara);
                                 break;
 
                             case FF.Table ffTable:
-                                var wpTable = _ooxmlDoc.CreateTable(ffTable);
+                                var wpTable = OoxmlTable.CreateInstance(
+                                   _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpTable);
                                 break;
                             case FF.Image ffImage:
-                                var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                                //var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                                var wpImage = OoxmlImage.CreateInstance(
+                                   _ooxmlDoc.MainPart).CreateImage(ffImage);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpImage);
                                 break;
 
                             case FF.Shape ffShape:
-                                var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                                //var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                                var wpShape = OoxmlShape.CreateInstance().CreateShape(ffShape);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpShape);
                                 break;
 
                             case FF.GroupShape ffGroupShape:
-                                var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                                //var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                                var wpGroupShape = OoxmlGroupShape.CreateInstance().
+                                    CreateGroupShape(ffGroupShape);
                                 elements.ElementAt(position).InsertBeforeSelf(wpGroupShape);
                                 break;
                         }
@@ -224,28 +240,36 @@ namespace OpenXML.Words.Data
                     switch (newElement)
                     {
                         case FF.Paragraph ffPara:
-                            var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            //var wpPara = _ooxmlDoc.CreateParagraph(ffPara);
+                            var wpPara = OoxmlParagraph.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpPara, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpPara);
                             break;
                         case FF.Table ffTable:
-                            var wpTable = _ooxmlDoc.CreateTable(ffTable);
+                            var wpTable = OoxmlTable.CreateInstance(
+                                _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpTable, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpTable);
                             break;
                         case FF.Image ffImage:
-                            var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            //var wpImage = _ooxmlDoc.CreateImage(ffImage, staticDoc.MainDocumentPart);
+                            var wpImage = OoxmlImage.CreateInstance(
+                                   _ooxmlDoc.MainPart).CreateImage(ffImage);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpImage, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpImage);
                             break;
                         case FF.Shape ffShape:
-                            var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            //var wpShape = _ooxmlDoc.CreateShape(ffShape);
+                            var wpShape = OoxmlShape.CreateInstance().CreateShape(ffShape);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpShape, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpShape);
                             break;
 
                         case FF.GroupShape ffGroupShape:
-                            var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            //var wpGroupShape = _ooxmlDoc.CreateGroupShape(ffGroupShape);
+                            var wpGroupShape = OoxmlGroupShape.CreateInstance().
+                                CreateGroupShape(ffGroupShape);
                             if (lastSectionProperties != null) staticDoc.MainDocumentPart.Document.Body.InsertBefore(wpGroupShape, lastSectionProperties);
                             else staticDoc.MainDocumentPart.Document.Body.Append(wpGroupShape);
                             break;
