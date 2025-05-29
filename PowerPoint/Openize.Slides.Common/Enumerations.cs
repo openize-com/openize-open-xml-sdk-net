@@ -28,7 +28,8 @@ namespace Openize.Slides.Common.Enumerations
         Zoom,             // Zoom in or out
         FlyIn,            // Fly into the slide
         Spin,             // Spin in place
-        FloatIn         // Custom animation defined by the user
+        FloatIn,         // FloatIn
+        Bounce,          // Bounce
     }
 
 }

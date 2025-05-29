@@ -201,7 +201,7 @@ namespace Openize.Slides.Common
 
         public static string ConstructMessage (Exception Ex, string Operation)
         {
-            return $"Error in Operation {Operation} at Openize.Words: {Ex.Message} \n Inner Exception: {Ex.InnerException?.Message ?? "N/A"}";
+            return $"Error in Operation {Operation} at Openize.OpenXML-SDK: {Ex.Message} \n Inner Exception: {Ex.InnerException?.Message ?? "N/A"}";
         }
     }
 
