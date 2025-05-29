@@ -256,6 +256,7 @@ namespace Openize.Slides
             {
                 var facade = new RectangleShapeFacade();
                 facade.BackgroundColor = rect.BackgroundColor;
+                facade.Animation=rect.Animation;
                 rect.Facade = _SlideFacade.DrawRectangle(Utility.PixelsToEmu(rect.X), Utility.PixelsToEmu(rect.Y),
                     Utility.PixelsToEmu(rect.Width), Utility.PixelsToEmu(rect.Height), facade.BackgroundColor, facade);
                 rect.ShapeIndex = _Rectangles.Count + 1;
@@ -279,6 +280,7 @@ namespace Openize.Slides
             {
                 var facade = new TriangleShapeFacade();
                 facade.BackgroundColor = triangle.BackgroundColor;
+                facade.Animation = triangle.Animation;
                 triangle.Facade = _SlideFacade.DrawTriangle(Utility.PixelsToEmu(triangle.X), Utility.PixelsToEmu(triangle.Y),
                     Utility.PixelsToEmu(triangle.Width), Utility.PixelsToEmu(triangle.Height), facade.BackgroundColor, facade);
                 triangle.ShapeIndex = _Triangles.Count + 1;
@@ -302,6 +304,7 @@ namespace Openize.Slides
             {
                 var facade = new DiamondShapeFacade();
                 facade.BackgroundColor = diamond.BackgroundColor;
+                facade.Animation = diamond.Animation;
                 diamond.Facade = _SlideFacade.DrawDiamond(Utility.PixelsToEmu(diamond.X), Utility.PixelsToEmu(diamond.Y),
                     Utility.PixelsToEmu(diamond.Width), Utility.PixelsToEmu(diamond.Height), facade.BackgroundColor, facade);
                 diamond.ShapeIndex = _Diamonds.Count + 1;
@@ -324,6 +327,7 @@ namespace Openize.Slides
             try
             {
                 var facade = new LineFacade();
+                facade.Animation = line.Animation;
                 line.Facade = _SlideFacade.DrawLine(Utility.PixelsToEmu(line.X), Utility.PixelsToEmu(line.Y),
                     Utility.PixelsToEmu(line.Width), Utility.PixelsToEmu(line.Height), facade);
                 line.ShapeIndex = _Lines.Count + 1;
@@ -346,6 +350,7 @@ namespace Openize.Slides
             try
             {
                 var facade = new CurvedLineFacade();
+                facade.Animation = curvedLine.Animation;
                 curvedLine.Facade = _SlideFacade.DrawCurvedLine(Utility.PixelsToEmu(curvedLine.X), Utility.PixelsToEmu(curvedLine.Y),
                     Utility.PixelsToEmu(curvedLine.Width), Utility.PixelsToEmu(curvedLine.Height), facade);
                 curvedLine.ShapeIndex = _CurvedLines.Count + 1;
@@ -368,6 +373,7 @@ namespace Openize.Slides
             try
             {
                 var facade = new ArrowFacade();
+
                 facade.Animation = arrow.Animation;
                 arrow.Facade = _SlideFacade.DrawArrow(Utility.PixelsToEmu(arrow.X), Utility.PixelsToEmu(arrow.Y),
                     Utility.PixelsToEmu(arrow.Width), Utility.PixelsToEmu(arrow.Height), facade);

@@ -894,7 +894,7 @@ namespace Openize.Slides.Facade
             // Optionally, override default properties
             animateFacade.ShapeId = shapeId; // You can change the ShapeId if needed
 
-            _PresentationSlide.Append(animateFacade.animate());
+            _PresentationSlide.Append(animateFacade.Animate());
         }
         public void close()
         {
