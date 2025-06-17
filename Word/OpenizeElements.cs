@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+
 namespace Openize.Words.IElements
 {
     /// <summary>
@@ -226,6 +229,111 @@ namespace Openize.Words.IElements
         {
             Text = string.Join("", Runs.Select(run => run.Text));
         }
+
+        internal void ReplaceText(string search, string replacement, bool useRegex = false)
+        {
+            var matches = useRegex
+            ? Regex.Matches(this.Text, search)
+            : Regex.Matches(this.Text, Regex.Escape(search));
+
+            if (matches.Count == 0) return;
+
+            var newRuns = new List<Run>();
+            int globalIndex = 0;
+
+            foreach (Match match in matches)
+            {
+                int matchStart = match.Index;
+                int matchEnd = match.Index + match.Length;
+
+                // Track through original runs
+                int currentIndex = 0;
+                foreach (var run in this.Runs)
+                {
+                    var text = run.Text;
+                    int runStart = currentIndex;
+                    int runEnd = currentIndex + text.Length;
+
+                    if (runEnd <= matchStart || runStart >= matchEnd)
+                    {
+                        newRuns.Add(CloneRun(run));
+                    }
+                    else
+                    {
+                        // Overlaps with the match
+                        int relativeStart = Math.Max(0, matchStart - currentIndex);
+                        int relativeEnd = Math.Min(text.Length, matchEnd - currentIndex);
+
+                        if (relativeStart > 0)
+                        {
+                            newRuns.Add(new Run
+                            {
+                                Text = text.Substring(0, relativeStart),
+                                FontFamily = run.FontFamily,
+                                FontSize = run.FontSize,
+                                Color = run.Color,
+                                Bold = run.Bold,
+                                Italic = run.Italic,
+                                Underline = run.Underline
+                            });
+                        }
+
+                        if (runStart <= matchStart && runEnd >= matchEnd)
+                        {
+                            newRuns.Add(new Run
+                            {
+                                Text = replacement,
+                                FontFamily = run.FontFamily,
+                                FontSize = run.FontSize,
+                                Color = run.Color,
+                                Bold = run.Bold,
+                                Italic = run.Italic,
+                                Underline = run.Underline
+                            });
+                        }
+
+                        if (relativeEnd < text.Length)
+                        {
+                            newRuns.Add(new Run
+                            {
+                                Text = text.Substring(relativeEnd),
+                                FontFamily = run.FontFamily,
+                                FontSize = run.FontSize,
+                                Color = run.Color,
+                                Bold = run.Bold,
+                                Italic = run.Italic,
+                                Underline = run.Underline
+                            });
+                        }
+                    }
+
+                    currentIndex += run.Text.Length;
+
+                    if (currentIndex >= matchEnd)
+                        break;
+                }
+
+                // Replace only the first match at a time to avoid index shifting
+                break;
+            }
+
+            this.Runs.Clear();
+            foreach (var r in newRuns)
+            {
+                this.AddRun(r);
+            }
+        }
+        private static Run CloneRun(Run r) =>
+        new Run
+        {
+            Text = r.Text,
+            FontFamily = r.FontFamily,
+            FontSize = r.FontSize,
+            Color = r.Color,
+            Bold = r.Bold,
+            Italic = r.Italic,
+            Underline = r.Underline
+        };
     }
 
     /// <summary>
