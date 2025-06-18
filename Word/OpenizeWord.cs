@@ -959,30 +959,13 @@ namespace Openize.Words
             try
             {
                 var updatedElements = new List<IElement>();
-
-                // Compile regex pattern once
                 var regex = useRegex
                     ? new System.Text.RegularExpressions.Regex(search)
                     : new System.Text.RegularExpressions.Regex(System.Text.RegularExpressions.Regex.Escape(search));
-
-                // Local helper for paragraph processing
-                /**
-                void ProcessParagraph(Paragraph para)
-                {
-                    if (regex.IsMatch(para.Text))
-                    {
-                        Console.WriteLine("Match Found");
-                        para.ReplaceText(search, replacement, useRegex);
-                        //updatedElements.Add(para);
-                    }
-                }
-                **/
-
                 foreach (var element in _lstStructure)
                 {
                     if (element is Paragraph para)
                     {
-                        //ProcessParagraph(para);
                         if (regex.IsMatch(para.Text))
                         {
                             para.ReplaceText(search, replacement, useRegex);
@@ -1002,13 +985,7 @@ namespace Openize.Words
                                     {
                                         cellPara.ReplaceText(search, replacement, useRegex);
                                         isMatched = true;
-                                        //updatedElements.Add(para);
                                     }
-
-                                    //ProcessParagraph(cellPara);
-                                    //count++;
-                                    //cell.Paragraphs[count] = cellPara;
-                                    //updatedElements.Add(cellPara);
                                 }
                             }
                         }
@@ -1018,8 +995,6 @@ namespace Openize.Words
                         }
                     }
                 }
-
-                // Apply updates in a separate loop
                 foreach (var element in updatedElements)
                 {
                     this.Update(element.ElementId, element);
@@ -1031,57 +1006,6 @@ namespace Openize.Words
                 throw new OpenizeException(errorMessage, ex);
             }
         }
-
-        /**
-        public void ReplaceText(string search, string replacement, bool useRegex = false)
-        {
-            var updatedElements = new List<IElement>();
-
-            // Compile the regex pattern once
-            var regex = useRegex
-                ? new System.Text.RegularExpressions.Regex(search)
-                : new System.Text.RegularExpressions.Regex(System.Text.RegularExpressions.Regex.Escape(search));
-
-            foreach (var element in _lstStructure)
-            {
-                if (element is Paragraph para)
-                {
-                    var matches = regex.Matches(para.Text);
-                    if (matches.Count > 0)
-                    {
-                        Console.WriteLine("Match Found");
-                        para.ReplaceText(search, replacement, useRegex);
-                        updatedElements.Add(para);
-                    }
-                }
-                if (element is Table table)
-                {
-                    foreach (var row in table.Rows)
-                    {
-                        foreach (var cell in row.Cells)
-                        {
-                            foreach (var cellPara in cell.Paragraphs)
-                            {
-                                var matches = regex.Matches(cellPara.Text);
-                                if (matches.Count > 0)
-                                {
-                                    cellPara.ReplaceText(search, replacement, useRegex);
-                                    updatedElements.Add(cellPara);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Apply updates in a separate loop
-            foreach (var element in updatedElements)
-            {
-                this.Update(element.ElementId, element);
-            }
-
-        }
-        **/
 
         /// <summary>
         /// Dispose off all managed and unmanaged resources.

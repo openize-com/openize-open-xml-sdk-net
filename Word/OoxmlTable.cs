@@ -62,7 +62,8 @@ namespace OpenXML.Words
                             foreach (var ffPara in ffCell.Paragraphs)
                             {
                                 //CreateParagraph(ffPara));
-                                wpCell.Append(OoxmlParagraph.CreateInstance(_IDs, _numberingPart).CreateParagraph(ffPara));
+                                wpCell.Append(OoxmlParagraph.CreateInstance(_IDs, _numberingPart).
+                                    CreateParagraph(ffPara));
                             }
 
                             wpRow.Append(wpCell);
@@ -93,32 +94,13 @@ namespace OpenXML.Words
                 {
                     var ffCell = ffRow.Cells[j];
                     var wpCell = wpCells[j];
-
-                    // Clear existing content
                     wpCell.RemoveAllChildren<WP.Paragraph>();
-                    // Recreate paragraphs from custom structure
                     foreach (var para in ffCell.Paragraphs)
                     {
-                        Console.WriteLine(para.Text);
-                        /**
-                        var wpPara = new WP.Paragraph();
-
-                        foreach (var run in para.Runs)
-                        {
-                            var wpRun = new WP.Run();
-                            var wpText = new WP.Text(run.Text ?? string.Empty)
-                            {
-                                Space = SpaceProcessingModeValues.Preserve
-                            };
-                            wpRun.Append(wpText);
-                            wpPara.Append(wpRun);
-                        }
-                        **/
-                        wpCell.Append(OoxmlParagraph.CreateInstance(_IDs, _numberingPart).CreateParagraph(para));
+                        wpCell.Append(OoxmlParagraph.CreateInstance(_IDs, _numberingPart).
+                            CreateParagraph(para));
                     }
-                    //wpRow.Append(wpCell);
                 }
-                //wpTable.Append(wpRow);
             }
             return wpTable;
         }
