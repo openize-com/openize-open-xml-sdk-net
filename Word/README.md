@@ -157,3 +157,4 @@ doc.Save("WordGroupShape.docx");
 var doc = new Openize.Words.Document("sample.docx");
 doc.ReplaceText("Original","Replaced");
 doc.Save("sample-updated.docx");
+```
