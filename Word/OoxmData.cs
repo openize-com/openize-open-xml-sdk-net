@@ -16,6 +16,8 @@ namespace OpenXML.Words.Data
     {
         private static ConcurrentDictionary<int, WordprocessingDocument> _staticDocDict =
             new ConcurrentDictionary<int, WordprocessingDocument>();
+        private static Dictionary<int, WP.Table> _staticTableDict =
+            new Dictionary<int, WP.Table>();
         private static int _staticDocCount = 0;
         private OwDocument _ooxmlDoc;
         private readonly object _lockObject = new object();
@@ -48,10 +50,14 @@ namespace OpenXML.Words.Data
             return new OoxmlDocData();
         }
 
-
         internal static string ConstructMessage(Exception ex, string operation)
         {
             return $"Error in operation {operation} at OpenXML.Words.Data : {ex.Message} \n Inner Exception: {ex.InnerException?.Message ?? "N/A"}";
+        }
+
+        internal static void MapTable(int elementID,WP.Table wpTable)
+        {
+             _staticTableDict.TryAdd(elementID, wpTable);
         }
 
         internal void Insert(FF.IElement newElement, int position, Document doc)
@@ -80,7 +86,6 @@ namespace OpenXML.Words.Data
                                 _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateParagraph(ffPara);
                             elements.ElementAt(position).InsertBeforeSelf(wpPara);
                             break;
-
 
                         case FF.Table ffTable:
                             var wpTable = OoxmlTable.CreateInstance(
@@ -152,8 +157,12 @@ namespace OpenXML.Words.Data
                                 break;
 
                             case FF.Table ffTable:
+                                _staticTableDict.TryGetValue(ffTable.ElementId, out WP.Table wpOldTable);
+                                //var wpTable = OoxmlTable.CreateInstance(
+                                //   _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
                                 var wpTable = OoxmlTable.CreateInstance(
-                                   _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).CreateTable(ffTable);
+                                    _ooxmlDoc.IDs, _ooxmlDoc.NumberingPart).
+                                    UpdateTable(ffTable, wpOldTable);
                                 enumerable1.ElementAt(position).InsertBeforeSelf(wpTable);
                                 break;
                             case FF.Image ffImage:

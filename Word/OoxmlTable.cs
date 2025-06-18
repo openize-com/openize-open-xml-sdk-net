@@ -5,6 +5,7 @@ using DocumentFormat.OpenXml.Packaging;
 using WP = DocumentFormat.OpenXml.Wordprocessing;
 using FF = Openize.Words.IElements;
 using OWD = OpenXML.Words.Data;
+using DocumentFormat.OpenXml;
 
 namespace OpenXML.Words
 {
@@ -61,7 +62,8 @@ namespace OpenXML.Words
                             foreach (var ffPara in ffCell.Paragraphs)
                             {
                                 //CreateParagraph(ffPara));
-                                wpCell.Append(OoxmlParagraph.CreateInstance(_IDs, _numberingPart).CreateParagraph(ffPara));
+                                wpCell.Append(OoxmlParagraph.CreateInstance(_IDs, _numberingPart).
+                                    CreateParagraph(ffPara));
                             }
 
                             wpRow.Append(wpCell);
@@ -79,6 +81,30 @@ namespace OpenXML.Words
                 }
             }
         }
+
+        internal WP.Table UpdateTable(FF.Table ffTable,WP.Table wpTable)
+        {
+            var wpRows = wpTable.Elements<WP.TableRow>().ToList();
+            for (int i = 0; i < ffTable.Rows.Count && i < wpRows.Count; i++)
+            {
+                var ffRow = ffTable.Rows[i];
+                var wpRow = wpRows[i];
+                var wpCells = wpRow.Elements<WP.TableCell>().ToList();
+                for (int j = 0; j < ffRow.Cells.Count && j < wpCells.Count; j++)
+                {
+                    var ffCell = ffRow.Cells[j];
+                    var wpCell = wpCells[j];
+                    wpCell.RemoveAllChildren<WP.Paragraph>();
+                    foreach (var para in ffCell.Paragraphs)
+                    {
+                        wpCell.Append(OoxmlParagraph.CreateInstance(_IDs, _numberingPart).
+                            CreateParagraph(para));
+                    }
+                }
+            }
+            return wpTable;
+        }
+
         internal FF.Table LoadTable(WP.Table wpTable, int id)
         {
             lock (_lockObject)
@@ -126,6 +152,8 @@ namespace OpenXML.Words
                     {
                         ffTable.Style = tableStyle.Val;
                     }
+
+                    OWD.OoxmlDocData.MapTable(id, wpTable);
 
                     return ffTable;
                 }

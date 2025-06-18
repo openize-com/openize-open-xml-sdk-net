@@ -26,7 +26,7 @@ var document = new Openize.Words.Document();
 document.Save("word.docx");
 Console.WriteLine("Empty word document created !!!");
 ```
-For more details please check [word readme](Word/README.md).
+For more details please check [word readme](https://github.com/openize-com/openize-open-xml-sdk-net/blob/main/Word/README.md).
 
 ### Create an Empty Excel Spreadsheet
 ```csharp

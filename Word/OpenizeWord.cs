@@ -925,6 +925,88 @@ namespace Openize.Words
                 }
             }
         }
+
+        /// <summary>
+        /// Replaces all occurrences of a specified string or regular expression pattern in the text content of 
+        /// paragraphs and table cells throughout the document.
+        /// </summary>
+        /// <param name="search">
+        /// The text or regular expression pattern to search for within the document's paragraphs.
+        /// </param>
+        /// <param name="replacement">
+        /// The text to replace each occurrence of the <paramref name="search"/> pattern with.
+        /// </param>
+        /// <param name="useRegex">
+        /// If <c>true</c>, interprets <paramref name="search"/> as a regular expression pattern; 
+        /// otherwise, treats it as plain text. Default is <c>false</c>.
+        /// </param>
+        /// <remarks>
+        /// This method scans both top-level paragraphs and paragraphs within tables. If a match is found in a paragraph,
+        /// the text is replaced using the provided <paramref name="replacement"/> value. Changes are tracked and applied
+        /// through the <c>Update</c> method to maintain document structure integrity.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// // Replace all occurrences of "foo" with "bar"
+        /// document.ReplaceText("foo", "bar");
+        /// 
+        /// // Replace using a regular expression to match digits
+        /// document.ReplaceText(@"\d+", "#", useRegex: true);
+        /// </code>
+        /// </example>
+        public void ReplaceText(string search, string replacement, bool useRegex = false)
+        {
+            try
+            {
+                var updatedElements = new List<IElement>();
+                var regex = useRegex
+                    ? new System.Text.RegularExpressions.Regex(search)
+                    : new System.Text.RegularExpressions.Regex(System.Text.RegularExpressions.Regex.Escape(search));
+                foreach (var element in _lstStructure)
+                {
+                    if (element is Paragraph para)
+                    {
+                        if (regex.IsMatch(para.Text))
+                        {
+                            para.ReplaceText(search, replacement, useRegex);
+                            updatedElements.Add(para);
+                        }
+                    }
+                    else if (element is Table table)
+                    {
+                        var isMatched = false;
+                        foreach (var row in table.Rows)
+                        {
+                            foreach (var cell in row.Cells)
+                            {
+                                foreach (var cellPara in cell.Paragraphs)
+                                {
+                                    if (regex.IsMatch(cellPara.Text))
+                                    {
+                                        cellPara.ReplaceText(search, replacement, useRegex);
+                                        isMatched = true;
+                                    }
+                                }
+                            }
+                        }
+                        if (isMatched)
+                        {
+                            updatedElements.Add(table);
+                        }
+                    }
+                }
+                foreach (var element in updatedElements)
+                {
+                    this.Update(element.ElementId, element);
+                }
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = ConstructMessage(ex, "Replace Text");
+                throw new OpenizeException(errorMessage, ex);
+            }
+        }
+
         /// <summary>
         /// Dispose off all managed and unmanaged resources.
         /// </summary>

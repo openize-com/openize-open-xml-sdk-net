@@ -3,12 +3,17 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <LangVersion>9.0</LangVersion>
-	  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	  <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+	  <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+	  <GenerateTargetFrameworkAttribute>true</GenerateTargetFrameworkAttribute>
+	  <!-- DLL version info -->
+	  <AssemblyVersion>25.6.1.0</AssemblyVersion>
+	  <FileVersion>25.6.1.0</FileVersion>
+	  <InformationalVersion>25.6.1</InformationalVersion>
+	  <!-- NuGet and metadata -->
 	  <Description>A .NET library that simplifies working with OpenXML documents. Create, read, and manipulate Wordprocessing documents (Docx), Excel spreadsheets (Xlsx), and PowerPoint presentations (Pptx) effortlessly with Openize.OpenXML SDK. Licensed under MIT.</Description>
-	  <ReleaseVersion>25.4.1</ReleaseVersion>
+	  <ReleaseVersion>25.6.1</ReleaseVersion>
 	  <SynchReleaseVersion>false</SynchReleaseVersion>
-	  <PackageVersion>25.4.1</PackageVersion>
+	  <PackageVersion>25.6.1</PackageVersion>
 	  <Authors>Openize Pty Ltd</Authors>
 	  <Copyright>2024-2025</Copyright>
 	  <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
