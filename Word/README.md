@@ -152,3 +152,8 @@ var groupShape = new Openize.Words.IElements.GroupShape(diamond, oval);
 body.AppendChild(groupShape);
 doc.Save("WordGroupShape.docx");
 ```
+## Word Find and Replace Text
+```csharp
+var doc = new Openize.Words.Document("sample.docx");
+doc.ReplaceText("Original","Replaced");
+doc.Save("sample-updated.docx");
