@@ -674,6 +674,10 @@ namespace Openize.Slides.Facade
 
         public void Save()
         {
+            if (IsNewPresentation)
+            {
+                CreatePresentationParts();
+            }
             _PresentationDocument?.PresentationPart?.Presentation.Save();
             _PresentationDocument?.Save();
         }

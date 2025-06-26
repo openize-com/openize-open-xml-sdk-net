@@ -101,14 +101,19 @@ namespace Openize.Slides
         /// </summary>
         /// <param name="CircleFacades">A list of CircleShapeFacade objects.</param>
         /// <returns>A list of Circle objects.</returns>
-        public static List<Circle> GetCircles(List<CircleShapeFacade> CircleFacades)
+        public static List<Circle> GetCircles(List<CircleShapeFacade> circleFacades)
         {
-            List<Circle> Circles = new List<Circle>();
+            List<Circle> circles = new List<Circle>();
+
+            // Safely return an empty list if the input is null
+            if (circleFacades == null)
+                return circles;
+
             try
             {
-                foreach (var facade in CircleFacades)
+                foreach (var facade in circleFacades)
                 {
-                    Circle Circle = new Circle
+                    Circle circle = new Circle
                     {
                         BackgroundColor = facade.BackgroundColor,
                         X = Utility.EmuToPixels(facade.X),
@@ -119,16 +124,16 @@ namespace Openize.Slides
                         ShapeIndex = facade.ShapeIndex
                     };
 
-                    Circles.Add(Circle);
+                    circles.Add(circle);
                 }
             }
             catch (Exception ex)
             {
-                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Getting Circle Shapes");
+                string errorMessage = Common.OpenizeException.ConstructMessage(ex, "Error occurred while getting Circle shapes.");
                 throw new Common.OpenizeException(errorMessage, ex);
             }
 
-            return Circles;
+            return circles;
         }
 
         /// <summary>

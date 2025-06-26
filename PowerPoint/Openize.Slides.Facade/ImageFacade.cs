@@ -76,10 +76,6 @@ namespace Openize.Slides.Facade
 
             D.NonVisualDrawingPropertiesExtension nonVisualDrawingPropertiesExtension1 = new D.NonVisualDrawingPropertiesExtension() { Uri = "{FF2B5EF4-FFF2-40B4-BE49-F238E27FC236}" };
 
-            OpenXmlUnknownElement openXmlUnknownElement1 = new OpenXmlUnknownElement("<a16:creationId xmlns:a16=\"http://schemas.microsoft.com/office/drawing/2014/main\" id=\"{4C9EFE4F-2DDB-7B29-01C3-5A94A8DA92D4}\" />");
-
-            nonVisualDrawingPropertiesExtension1.Append(openXmlUnknownElement1);
-
             nonVisualDrawingPropertiesExtensionList1.Append(nonVisualDrawingPropertiesExtension1);
 
             nonVisualDrawingProperties1.Append(nonVisualDrawingPropertiesExtensionList1);
