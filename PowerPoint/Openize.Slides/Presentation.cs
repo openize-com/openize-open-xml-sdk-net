@@ -132,11 +132,11 @@ namespace Openize.Slides
                     slideFacade.CommentPart = slidepart.SlideCommentsPart;
                     slideFacade.NotesPart = slidepart.NotesSlidePart;
                     slideFacade.RelationshipId = doc.GetSlideRelationshipId(slidepart);
-                    slide.TextShapes = TextShape.GetTextShapes(slideFacade.TextShapeFacades);
-                    slide.Rectangles = Rectangle.GetRectangles(slideFacade.RectangleShapeFacades);
-                    slide.Circles = Circle.GetCircles(slideFacade.CircleShapeFacades);
-                    slide.Images = Image.GetImages(slideFacade.ImagesFacade);
-                    slide.Tables = Table.GetTables(slideFacade.TableFacades);
+                    slide.SetTextShapesDirect(TextShape.GetTextShapes(slideFacade.TextShapeFacades));
+                    slide.SetRectanglesDirect(Rectangle.GetRectangles(slideFacade.RectangleShapeFacades));
+                    slide.SetCirclesDirect(Circle.GetCircles(slideFacade.CircleShapeFacades));
+                    slide.SetImagesDirect(Image.GetImages(slideFacade.ImagesFacade));
+                    slide.SetTablesDirect(Table.GetTables(slideFacade.TableFacades));
                     slide.SlideFacade = slideFacade;
                     slide.SlidePresentation = this;
                     _Slides.Add(slide);

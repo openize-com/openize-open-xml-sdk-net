@@ -7,6 +7,7 @@ using Openize.Slides.Common.Enumerations;
 using Openize.Slides.Facade;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 
@@ -50,7 +51,19 @@ namespace Openize.Slides
         /// <summary>
         /// Property contains the list of all text shapes.
         /// </summary>
-        public List<TextShape> TextShapes { get => _TextShapes; set => _TextShapes = value; }
+        public List<TextShape> TextShapes
+        {
+            get => _TextShapes;
+            set
+            {
+                _TextShapes = new List<TextShape>();
+                foreach (var shape in value)
+                {
+                    AddTextShapes(shape); // Ensures they get properly added and rendered
+                }
+            }
+        }
+
         /// <summary>
         /// Property for the relationship Id.
         /// </summary>
@@ -63,7 +76,19 @@ namespace Openize.Slides
         /// <summary>
         /// Property contains the list of all images within a slide.
         /// </summary>
-        public List<Image> Images { get => _Images; set => _Images = value; }
+        public List<Image> Images
+        {
+            get => _Images;
+            set
+            {
+                _Images = new List<Image>();
+                foreach (var image in value)
+                {
+                    AddImage(image); // Ensures they get properly added and rendered
+                }
+            }
+        }
+
         /// <summary>
         /// Property to set background color of a slide.
         /// </summary>
@@ -71,7 +96,23 @@ namespace Openize.Slides
         /// <summary>
         /// Property to get or set the list of tables
         /// </summary>
-        public List<Table> Tables { get => _Tables; set => _Tables = value; }
+        public List<Table> Tables
+        {
+            get => _Tables;
+            set
+            {
+                _Tables = new List<Table>();
+                if (value != null)
+                {
+                    foreach (var table in value)
+                    {
+                        AddTable(table); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
+
+
         /// <summary>
         /// Property to get or set the relative presentation instance
         /// </summary>
@@ -79,66 +120,361 @@ namespace Openize.Slides
         /// <summary>
         /// Property to get or set the list of Rectangles.
         /// </summary>
-        public List<Rectangle> Rectangles { get => _Rectangles; set => _Rectangles = value; }
+        public List<Rectangle> Rectangles
+        {
+            get => _Rectangles;
+            set
+            {
+                _Rectangles = new List<Rectangle>();
+                if (value != null)
+                {
+                    foreach (var rectangle in value)
+                    {
+                        DrawRectangle(rectangle); // Ensures proper addition and rendering
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of circles.
         /// </summary>
-        public List<Circle> Circles { get => _Circles; set => _Circles = value; }
+        public List<Circle> Circles
+        {
+            get => _Circles;
+            set
+            {
+                _Circles = new List<Circle>();
+                if (value != null)
+                {
+                    foreach (var circle in value)
+                    {
+                        DrawCircle(circle); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of diamonds.
         /// </summary>
-        public List<Diamond> Diamonds { get => _Diamonds; set => _Diamonds = value; }
+        public List<Diamond> Diamonds
+        {
+            get => _Diamonds;
+            set
+            {
+                _Diamonds = new List<Diamond>();
+                if (value != null)
+                {
+                    foreach (var diamond in value)
+                    {
+                        DrawDiamond(diamond); // Ensures proper addition and handling
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of triangles.
         /// </summary>
-        public List<Triangle> Triangles { get => _Triangles; set => _Triangles = value; }
+        public List<Triangle> Triangles
+        {
+            get => _Triangles;
+            set
+            {
+                _Triangles = new List<Triangle>();
+                if (value != null)
+                {
+                    foreach (var triangle in value)
+                    {
+                        DrawTriangle(triangle); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of lines.
         /// </summary>
-        public List<Line> Lines { get => _Lines; set => _Lines = value; }
+        public List<Line> Lines
+        {
+            get => _Lines;
+            set
+            {
+                _Lines = new List<Line>();
+                if (value != null)
+                {
+                    foreach (var line in value)
+                    {
+                        DrawLine(line); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of arrows.
         /// </summary>
-        public List<Arrow> Arrows { get => _Arrows; set => _Arrows = value; }
+        public List<Arrow> Arrows
+        {
+            get => _Arrows;
+            set
+            {
+                _Arrows = new List<Arrow>();
+                if (value != null)
+                {
+                    foreach (var arrow in value)
+                    {
+                        DrawArrow(arrow); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of double arrows.
         /// </summary>
-        public List<DoubleArrow> DoubleArrows { get => _DoubleArrows; set => _DoubleArrows = value; }
+        public List<DoubleArrow> DoubleArrows
+        {
+            get => _DoubleArrows;
+            set
+            {
+                _DoubleArrows = new List<DoubleArrow>();
+                if (value != null)
+                {
+                    foreach (var doubleArrow in value)
+                    {
+                        DrawDoubleArrow(doubleArrow); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of curved lines.
         /// </summary>
-        public List<CurvedLine> CurvedLines { get => _CurvedLines; set => _CurvedLines = value; }
+        public List<CurvedLine> CurvedLines
+        {
+            get => _CurvedLines;
+            set
+            {
+                _CurvedLines = new List<CurvedLine>();
+                if (value != null)
+                {
+                    foreach (var curvedLine in value)
+                    {
+                        DrawCurvedLine(curvedLine); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Property to get or set list of double braces.
         /// </summary>
-        public List<DoubleBrace> DoubleBraces { get => _DoubleBraces; set => _DoubleBraces = value; }
+        public List<DoubleBrace> DoubleBraces
+        {
+            get => _DoubleBraces;
+            set
+            {
+                _DoubleBraces = new List<DoubleBrace>();
+                if (value != null)
+                {
+                    foreach (var doubleBrace in value)
+                    {
+                        DrawDoubleBrace(doubleBrace); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Property to get or set list of Pentagons.
         /// </summary>
-        public List<Pentagon> Pentagons { get => _Pentagons; set => _Pentagons = value; }
+        public List<Pentagon> Pentagons
+        {
+            get => _Pentagons;
+            set
+            {
+                _Pentagons = new List<Pentagon>();
+                if (value != null)
+                {
+                    foreach (var pentagon in value)
+                    {
+                        DrawPentagon(pentagon); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Property to get or set list of double bracket.
         /// </summary>
-        public List<DoubleBracket> DoubleBrackets { get => _DoubleBrackets; set => _DoubleBrackets = value; }
+        public List<DoubleBracket> DoubleBrackets
+        {
+            get => _DoubleBrackets;
+            set
+            {
+                _DoubleBrackets = new List<DoubleBracket>();
+                if (value != null)
+                {
+                    foreach (var doubleBracket in value)
+                    {
+                        DrawDoubleBracket(doubleBracket); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Property to get or set list of Hexagon.
         /// </summary>
-        public List<Hexagon> Hexagons { get => _Hexagons; set => _Hexagons = value; }
+        public List<Hexagon> Hexagons
+        {
+            get => _Hexagons;
+            set
+            {
+                _Hexagons = new List<Hexagon>();
+                if (value != null)
+                {
+                    foreach (var hexagon in value)
+                    {
+                        DrawHexagon(hexagon); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Property to get or set list of Trapezoid.
         /// </summary>
-        public List<Trapezoid> Trapezoids { get => _Trapezoids; set => _Trapezoids = value; }
+        public List<Trapezoid> Trapezoids
+        {
+            get => _Trapezoids;
+            set
+            {
+                _Trapezoids = new List<Trapezoid>();
+                if (value != null)
+                {
+                    foreach (var trapezoid in value)
+                    {
+                        DrawTrapezoid(trapezoid); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Property to get or set list of Pie.
         /// </summary>
-        public List<Pie> Pies { get => _Pies; set => _Pies = value; }
+        public List<Pie> Pies
+        {
+            get => _Pies;
+            set
+            {
+                _Pies = new List<Pie>();
+                if (value != null)
+                {
+                    foreach (var pie in value)
+                    {
+                        DrawPie(pie); // Ensures proper addition and processing
+                    }
+                }
+            }
+        }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetTextShapesDirect(List<TextShape> textShapes)
+        {
+            _TextShapes = textShapes ?? new List<TextShape>();
+        }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetImagesDirect(List<Image> images)
+        {
+            _Images = images ?? new List<Image>();
+        }
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetTablesDirect(List<Table> tables)
+        {
+            _Tables = tables ?? new List<Table>();
+        }
 
-       
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetRectanglesDirect(List<Rectangle> rectangles)
+        {
+            _Rectangles = rectangles ?? new List<Rectangle>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetCirclesDirect(List<Circle> circles)
+        {
+            _Circles = circles ?? new List<Circle>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetDiamondsDirect(List<Diamond> diamonds)
+        {
+            _Diamonds = diamonds ?? new List<Diamond>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetTrianglesDirect(List<Triangle> triangles)
+        {
+            _Triangles = triangles ?? new List<Triangle>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetLinesDirect(List<Line> lines)
+        {
+            _Lines = lines ?? new List<Line>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetArrowsDirect(List<Arrow> arrows)
+        {
+            _Arrows = arrows ?? new List<Arrow>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetDoubleArrowsDirect(List<DoubleArrow> doubleArrows)
+        {
+            _DoubleArrows = doubleArrows ?? new List<DoubleArrow>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetCurvedLinesDirect(List<CurvedLine> curvedLines)
+        {
+            _CurvedLines = curvedLines ?? new List<CurvedLine>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetDoubleBracesDirect(List<DoubleBrace> doubleBraces)
+        {
+            _DoubleBraces = doubleBraces ?? new List<DoubleBrace>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetPentagonsDirect(List<Pentagon> pentagons)
+        {
+            _Pentagons = pentagons ?? new List<Pentagon>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetDoubleBracketsDirect(List<DoubleBracket> doubleBrackets)
+        {
+            _DoubleBrackets = doubleBrackets ?? new List<DoubleBracket>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetHexagonsDirect(List<Hexagon> hexagons)
+        {
+            _Hexagons = hexagons ?? new List<Hexagon>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetTrapezoidsDirect(List<Trapezoid> trapezoids)
+        {
+            _Trapezoids = trapezoids ?? new List<Trapezoid>();
+        }
+
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        internal void SetPiesDirect(List<Pie> pies)
+        {
+            _Pies = pies ?? new List<Pie>();
+        }
+
+
 
         /// <summary>
         /// Constructor for the Slide class.
