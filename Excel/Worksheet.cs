@@ -2035,6 +2035,323 @@ namespace Openize.Cells
             _worksheetPart.Worksheet.Save();
         }
 
+        // Add these methods to the Worksheet class in Worksheet.cs
+
+        private ConditionalFormattingManager _conditionalFormattingManager;
+
+        /// <summary>
+        /// Gets the conditional formatting manager for this worksheet.
+        /// </summary>
+        private ConditionalFormattingManager ConditionalFormattingManager
+        {
+            get
+            {
+                if (_conditionalFormattingManager == null)
+                {
+                    var workbookPart = _workbookPart;
+                    var stylesPart = workbookPart.WorkbookStylesPart ?? workbookPart.AddNewPart<WorkbookStylesPart>();
+                    _conditionalFormattingManager = new ConditionalFormattingManager(_worksheetPart, stylesPart);
+                }
+                return _conditionalFormattingManager;
+            }
+        }
+
+        /// <summary>
+        /// Applies a conditional formatting rule to the specified cell range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to apply the formatting to (e.g., "A1:A10" or "B2:D5")</param>
+        /// <param name="rule">The conditional formatting rule to apply</param>
+        /// <exception cref="ArgumentNullException">Thrown when cellRange or rule is null</exception>
+        /// <exception cref="ArgumentException">Thrown when cellRange is empty or invalid</exception>
+        /// <example>
+        /// <code>
+        /// // Highlight cells greater than 100 in green
+        /// var style = new ConditionalFormattingStyle
+        /// {
+        ///     BackgroundColor = "FF92D050" // Green
+        /// };
+        /// var rule = ConditionalFormattingRule.GreaterThan("100", style);
+        /// worksheet.ApplyConditionalFormatting("B2:B10", rule);
+        /// </code>
+        /// </example>
+        public void ApplyConditionalFormatting(string cellRange, ConditionalFormattingRule rule)
+        {
+            if (string.IsNullOrEmpty(cellRange))
+                throw new ArgumentException("Cell range cannot be null or empty.", nameof(cellRange));
+
+            if (rule == null)
+                throw new ArgumentNullException(nameof(rule));
+
+            rule.CellRange = cellRange;
+            ConditionalFormattingManager.ApplyRule(rule);
+            _worksheetPart.Worksheet.Save();
+        }
+
+        /// <summary>
+        /// Applies multiple conditional formatting rules to the specified cell range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to apply the formatting to</param>
+        /// <param name="rules">The conditional formatting rules to apply</param>
+        /// <exception cref="ArgumentNullException">Thrown when cellRange or rules is null</exception>
+        /// <exception cref="ArgumentException">Thrown when cellRange is empty</exception>
+        public void ApplyConditionalFormatting(string cellRange, params ConditionalFormattingRule[] rules)
+        {
+            if (string.IsNullOrEmpty(cellRange))
+                throw new ArgumentException("Cell range cannot be null or empty.", nameof(cellRange));
+
+            if (rules == null || rules.Length == 0)
+                throw new ArgumentNullException(nameof(rules));
+
+            foreach (var rule in rules)
+            {
+                rule.CellRange = cellRange;
+            }
+
+            ConditionalFormattingManager.ApplyRules(rules);
+            _worksheetPart.Worksheet.Save();
+        }
+
+        /// <summary>
+        /// Applies a conditional formatting rule to a range object.
+        /// </summary>
+        /// <param name="range">The range to apply the formatting to</param>
+        /// <param name="rule">The conditional formatting rule to apply</param>
+        /// <exception cref="ArgumentNullException">Thrown when range or rule is null</exception>
+        public void ApplyConditionalFormatting(Range range, ConditionalFormattingRule rule)
+        {
+            if (range == null)
+                throw new ArgumentNullException(nameof(range));
+
+            if (rule == null)
+                throw new ArgumentNullException(nameof(rule));
+
+            string cellRange = $"{IndexToColumnLetter((int)range.StartColumnIndex)}{range.StartRowIndex}:" +
+                              $"{IndexToColumnLetter((int)range.EndColumnIndex)}{range.EndRowIndex}";
+
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Removes all conditional formatting from the worksheet.
+        /// </summary>
+        public void ClearConditionalFormatting()
+        {
+            var conditionalFormattings = _worksheetPart.Worksheet.Elements<ConditionalFormatting>().ToList();
+            foreach (var cf in conditionalFormattings)
+            {
+                cf.Remove();
+            }
+            _worksheetPart.Worksheet.Save();
+        }
+
+        /// <summary>
+        /// Removes conditional formatting from a specific cell range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to remove formatting from</param>
+        /// <returns>True if any formatting was removed, false otherwise</returns>
+        public bool RemoveConditionalFormatting(string cellRange)
+        {
+            if (string.IsNullOrEmpty(cellRange))
+                throw new ArgumentException("Cell range cannot be null or empty.", nameof(cellRange));
+
+            bool removed = false;
+            var conditionalFormattings = _worksheetPart.Worksheet.Elements<ConditionalFormatting>().ToList();
+
+            foreach (var cf in conditionalFormattings)
+            {
+                if (cf.SequenceOfReferences != null && cf.SequenceOfReferences.InnerText == cellRange)
+                {
+                    cf.Remove();
+                    removed = true;
+                }
+            }
+
+            if (removed)
+                _worksheetPart.Worksheet.Save();
+
+            return removed;
+        }
+
+        /// <summary>
+        /// Gets all conditional formatting rules applied to the worksheet.
+        /// </summary>
+        /// <returns>A list of cell ranges and their applied conditional formatting count</returns>
+        public List<(string CellRange, int RuleCount)> GetConditionalFormattingInfo()
+        {
+            var result = new List<(string, int)>();
+            var conditionalFormattings = _worksheetPart.Worksheet.Elements<ConditionalFormatting>();
+
+            foreach (var cf in conditionalFormattings)
+            {
+                if (cf.SequenceOfReferences != null)
+                {
+                    var ruleCount = cf.Elements<DocumentFormat.OpenXml.Spreadsheet.ConditionalFormattingRule>().Count();
+                    result.Add((cf.SequenceOfReferences.InnerText, ruleCount));
+                }
+            }
+
+            return result;
+        }
+
+        // Helper method to apply commonly used formatting patterns
+
+        /// <summary>
+        /// Highlights cells with negative values in red.
+        /// </summary>
+        /// <param name="cellRange">The cell range to apply the formatting to</param>
+        public void HighlightNegativeValues(string cellRange)
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = "FFFF0000", // Red
+                FontColor = "FFFFFFFF" // White
+            };
+            var rule = ConditionalFormattingRule.LessThan("0", style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Highlights cells with positive values in green.
+        /// </summary>
+        /// <param name="cellRange">The cell range to apply the formatting to</param>
+        public void HighlightPositiveValues(string cellRange)
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = "FF92D050", // Green
+                FontColor = "FF000000" // Black
+            };
+            var rule = ConditionalFormattingRule.GreaterThan("0", style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Adds a data bar to visualize values in the specified range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to apply the data bar to</param>
+        /// <param name="barColor">Optional: The color of the data bar in hex format (default is blue)</param>
+        public void AddDataBar(string cellRange, string barColor = null)
+        {
+            var options = new DataBarOptions
+            {
+                BarColor = barColor ?? "FF638EC6", // Default blue
+                ShowValue = true
+            };
+            var rule = ConditionalFormattingRule.DataBarRule(options);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Adds a color scale to visualize values in the specified range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to apply the color scale to</param>
+        /// <param name="twoColor">If true, uses a 2-color scale; otherwise uses a 3-color scale</param>
+        public void AddColorScale(string cellRange, bool twoColor = false)
+        {
+            var options = new ColorScaleOptions
+            {
+                TwoColorScale = twoColor
+            };
+            var rule = ConditionalFormattingRule.ColorScaleRule(options);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Highlights duplicate values in the specified range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to check for duplicates</param>
+        /// <param name="highlightColor">The background color for duplicate values in hex format</param>
+        public void HighlightDuplicates(string cellRange, string highlightColor = "FFFFEB9C")
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = highlightColor // Default yellow
+            };
+            var rule = ConditionalFormattingRule.DuplicateValues(style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Highlights the top N values in the specified range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to analyze</param>
+        /// <param name="count">The number of top values to highlight</param>
+        /// <param name="isPercent">If true, count represents a percentage</param>
+        /// <param name="highlightColor">The background color for top values</param>
+        public void HighlightTopValues(string cellRange, int count, bool isPercent = false, string highlightColor = "FF00B050")
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = highlightColor // Default green
+            };
+            var rule = ConditionalFormattingRule.Top10(count, isPercent, false, style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Highlights the bottom N values in the specified range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to analyze</param>
+        /// <param name="count">The number of bottom values to highlight</param>
+        /// <param name="isPercent">If true, count represents a percentage</param>
+        /// <param name="highlightColor">The background color for bottom values</param>
+        public void HighlightBottomValues(string cellRange, int count, bool isPercent = false, string highlightColor = "FFFF0000")
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = highlightColor, // Default red
+                FontColor = "FFFFFFFF" // White text
+            };
+            var rule = ConditionalFormattingRule.Top10(count, isPercent, true, style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Highlights values above the average in the specified range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to analyze</param>
+        /// <param name="highlightColor">The background color for above-average values</param>
+        public void HighlightAboveAverage(string cellRange, string highlightColor = "FF00B050")
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = highlightColor // Default green
+            };
+            var rule = ConditionalFormattingRule.AboveAverage(true, style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Highlights values below the average in the specified range.
+        /// </summary>
+        /// <param name="cellRange">The cell range to analyze</param>
+        /// <param name="highlightColor">The background color for below-average values</param>
+        public void HighlightBelowAverage(string cellRange, string highlightColor = "FFFFEB9C")
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = highlightColor // Default yellow
+            };
+            var rule = ConditionalFormattingRule.AboveAverage(false, style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
+        /// <summary>
+        /// Highlights cells containing specific text.
+        /// </summary>
+        /// <param name="cellRange">The cell range to search</param>
+        /// <param name="searchText">The text to search for</param>
+        /// <param name="highlightColor">The background color for matching cells</param>
+        public void HighlightCellsContainingText(string cellRange, string searchText, string highlightColor = "FFFFFF00")
+        {
+            var style = new ConditionalFormattingStyle
+            {
+                BackgroundColor = highlightColor // Default bright yellow
+            };
+            var rule = ConditionalFormattingRule.ContainsText(searchText, style);
+            ApplyConditionalFormatting(cellRange, rule);
+        }
+
 
 
 
